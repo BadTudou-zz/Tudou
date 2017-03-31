@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+	skip_before_action :verify_authenticity_token, :only => [:create]
 	#the Web page of register
 	def new
 		render plain: 'get Web page of register'
@@ -6,6 +7,13 @@ class UsersController < ApplicationController
 
 	#REST:create
 	def create
+		@user = User.new(user_params)
+ 		if @user.save
+ 			render :json => {:state =>'ok', :msg=>'user has beed create successd!'}
+ 		else
+ 			print 'error'
+ 			render :json => {:state =>'error', :msg=>'user/email/phone has been used!'}
+ 		end
 	end
 
 	#REST:read
@@ -24,4 +32,12 @@ class UsersController < ApplicationController
 	#REST:delete
 	def destroy
 	end
+
+
+  private
+
+    def user_params
+      params.permit([:name, :phone, :email, :password])
+    end
+
 end
