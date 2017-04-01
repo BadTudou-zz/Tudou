@@ -9,16 +9,18 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
  		if @user.save
+ 			log_in user
  			render :json => {:state =>'ok', :msg=>'user has beed create successd!'}
  		else
  			print 'error'
- 			render :json => {:state =>'error', :msg=>'user/email/phone has been used!'}
+ 			render :json => {:state =>'error', :msg=>'user/email/phone has been used!', error:@user.errors.full_messages}
  		end
 	end
 
 	#REST:read
 	def show
 		#render plain: 'get Web page of show'
+		@user = User.find(params[:id])
 	end
 
 	#the Web page of edit
