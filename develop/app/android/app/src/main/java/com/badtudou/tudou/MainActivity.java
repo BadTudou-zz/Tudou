@@ -18,19 +18,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
-    private Handler uiHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 0:
-                    Log.d("Test", "获取数据成功");
-                    break;
-                case -1:
-                    Log.d("Test", "网络错误");
-                    break;
-            }
-        }
-    };
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -63,20 +50,9 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_contacts);
 
-
-        //Test
-        Rest r = new Rest(uiHandler);
-        r.setTimeout(1000);
-        Map mapTest = new HashMap();
-        mapTest.put("test", "sss");
-        try {
-            r.post("http://wap.zol.com.cn/list/27.html", mapTest);
-            r.start();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        // Test
+        User user = new User();
+        user.login("admin", "admin");
     }
 
 }

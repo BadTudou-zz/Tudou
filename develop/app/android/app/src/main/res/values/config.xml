@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the configure infos of this app -->
+<resources>
+    <string name="server_host_develop">http://10.0.0.2:3000</string>
+    <string name="action_login">login</string>
+    <string name="action_register">register</string>
+</resources>
