@@ -3,9 +3,14 @@ package com.badtudou.tudou;
 import android.app.Application;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,10 +26,14 @@ public class User {
     public static final String USER_PHONE = "phone";
     public static final String USER_PASSWORD = "password";
     private  Rest rest = null;
+    private ResultCallBack callBack;
 
-    public User(){
+    public User(ResultCallBack callBack){
+        this.callBack = callBack;
         this.rest = new Rest(this.msgHandler);
     }
+
+
 
     private Handler msgHandler = new Handler(){
         @Override
@@ -32,7 +41,9 @@ public class User {
             switch (msg.what){
                 case Rest.SUCCESS_CODE:
                     //TODO: 处理
-                    Log.d("Test", "获取数据成功"+msg.getData().getString("resultString"));
+                    String resultResult = msg.getData().getString(Rest.RESULT_STRING);
+                    Log.d("Test", "获取数据成功"+msg.getData().getString(Rest.RESULT_STRING));
+                    callBack.handleResult(resultResult);
                     break;
                 case Rest.ERROR_Socket:
                     Log.d("Test", "网络错误"+msg.getData().getString("stateCode"));
@@ -43,11 +54,28 @@ public class User {
                 case Rest.ERROR_Server:
                     Log.d("Test", "服务器错误");
                     break;
+                default:
+                    super.handleMessage(msg);
+                    break;
             }
         }
     };
 
-    public boolean register(){
+
+    public boolean register(String name, String phone, String password){
+        Log.d("Test", "注册");
+        Map mapParams = new HashMap();
+        mapParams.put(USER_NAME, name);
+        mapParams.put(USER_PHONE, phone);
+        mapParams.put(USER_PASSWORD, password);
+
+        try {
+            this.rest.post("http://10.0.2.2:3000/signin", mapParams);
+            this.rest.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 

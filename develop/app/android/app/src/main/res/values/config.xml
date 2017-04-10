@@ -3,5 +3,5 @@
 <resources>
     <string name="server_host_develop">http://10.0.0.2:3000</string>
     <string name="action_login">login</string>
-    <string name="action_register">register</string>
+    <string name="action_signin">signin</string>
 </resources>

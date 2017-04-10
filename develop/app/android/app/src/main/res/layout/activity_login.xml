@@ -52,29 +52,76 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="246dp"
-        android:background="#512"
+        android:layout_height="match_parent"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="8dp">
         <EditText
-            android:background="#188"
+            android:id="@+id/edit_username"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="50dp" />
         <EditText
-            android:background="#168"
+            android:id="@+id/edit_userpassword"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_sign_in_remenber"/>
+            android:layout_height="50dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_sign_in_remenber"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:textColor="#56ABE4"
+                android:text="@string/action_forget_password"/>
+        </LinearLayout>
+
         <Button
+            android:id="@+id/button_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/action_sign_in"/>
+            android:textColor="#FFF"
+            android:background="#56ABE4"
+            android:text="@string/action_sign_in" />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/action_signin_with_socil"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="47dp">
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/vector_drawable_qq"
+                android:layout_marginLeft="42dp"/>
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="42dp"
+                android:background="@drawable/vector_drawable_wechat"/>
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_marginLeft="42dp"
+                android:layout_height="45dp"
+                android:background="@drawable/vector_drawable_weibo"/>
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_marginLeft="42dp"
+                android:layout_height="45dp"
+                android:background="@drawable/vector_drawable_twitter"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
             android:text="@string/app_copyright"
             />
     </LinearLayout>

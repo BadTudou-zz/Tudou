@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -26,11 +27,16 @@ public class Rest extends Thread {
     public static final  int ERROR_Socket = 2;
     public static final  int ERROR_Server = 3;
     public static final  int ERROR_Io = 4;
+    public static final String RESULT_STRING = "resultString";
+    public static final String ACTION = "action";
+    public static final String MSG = "msg";
+    public static final String STATE = "state";
+    public static final String STATE_CODE = "stateCode";
     private Handler handler;
     private Message message;
     private String urlPath, host, path;
     private Map<String, String> parameters, propertys;
-    private String method;
+    private String parametersString, method;
     private int time_out;
 
     Rest(Handler handler){
@@ -57,6 +63,15 @@ public class Rest extends Thread {
         this.urlPath = url;
         this.parameters = params;
         this.method = "POST";
+        this.parametersString = "";
+        Iterator<Map.Entry<String, String>> integer = this.parameters.entrySet().iterator();
+        while (integer.hasNext()) {
+            Map.Entry<String, String> entry = integer.next();
+            String key = entry.getKey();
+            String value = entry.getValue();
+            this.parametersString += (key + "=" + value + "&");
+        }
+        this.parametersString = this.parametersString.substring(0, this.parametersString.length()-1);
     }
 
     @Override
@@ -76,7 +91,7 @@ public class Rest extends Thread {
             OutputStream outStream = connection.getOutputStream();
 
             // send data
-            outStream.write(this.parameters.toString().getBytes());//post的参数 xx=xx&yy=yy
+            outStream.write(this.parametersString.getBytes());//post的参数 xx=xx&yy=yy
 
             // get input stream
             InputStream inStream  = connection.getInputStream();
@@ -99,13 +114,12 @@ public class Rest extends Thread {
 
             // close stream
             inStream.close();
-            String resultString = outStream.toString();// 把流中的数据转换成字符串,采用的编码是utf-8(模拟器默认编码)
             outStream.close();
 
             // translate result
             Bundle bundle = new Bundle();
-            bundle.putString("resultString", resultString);
-            bundle.putString("stateCode", String.valueOf(connection.getResponseCode()));
+            bundle.putString(RESULT_STRING, byteStream.toString());
+            bundle.putString(STATE_CODE, String.valueOf(connection.getResponseCode()));
             message.setData(bundle);
 
         } catch (MalformedURLException e) {
