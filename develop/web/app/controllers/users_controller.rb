@@ -10,10 +10,10 @@ class UsersController < ApplicationController
 		@user = User.new(user_params)
  		if @user.save
  			log_in user
- 			render :json => {:state =>'ok', :msg=>'user has beed create successd!'}
+ 			render :json => {:action =>'signin', :state =>'ok', :msg=>'user has beed create successd!'}
  		else
  			print 'error'
- 			render :json => {:state =>'error', :msg=>'user/email/phone has been used!', error:@user.errors.full_messages}
+ 			render :json => {:action =>'signin',, :state =>'error', :msg=>'user/email/phone has been used!', error:@user.errors.full_messages}
  		end
 	end
 
