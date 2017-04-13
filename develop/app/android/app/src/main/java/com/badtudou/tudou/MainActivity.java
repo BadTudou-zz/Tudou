@@ -2,27 +2,24 @@ package com.badtudou.tudou;
 
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity implements
         HistoryFragment.OnFragmentInteractionListener,
-        ContactsFragment.OnFragmentInteractionListener,
+        ContactsListFragment.OnFragmentInteractionListener,
         CallFragment.OnFragmentInteractionListener {
 
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
     private HistoryFragment historyFragment;
-    private ContactsFragment contactsFragment;
+    private ContactsListFragment contactsFragment;
     private CallFragment callFragment;
     private android.support.v4.app.FragmentTransaction transaction;
 
@@ -34,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements
             transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_history:
-                    mTextMessage.setText(R.string.title_history);
                     if (historyFragment == null) {
                         initFragments();
                     }
@@ -43,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements
                     return true;
 
                 case R.id.navigation_contacts:
-                    mTextMessage.setText(R.string.title_contacts);
                     if (contactsFragment == null) {
                         initFragments();
                     }
@@ -52,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements
                     return true;
 
                 case R.id.navigation_call:
-                    mTextMessage.setText(R.string.title_call);
                     if(callFragment == null){
                         initFragments();
                     }
@@ -71,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         initFragments();
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_contacts);
+
     }
 
     private void initFragments(){
@@ -82,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
         historyFragment = new HistoryFragment();
-        contactsFragment = new ContactsFragment();
+        contactsFragment = new ContactsListFragment();
         callFragment = new CallFragment();
         transaction.add(R.id.content, historyFragment);
         transaction.add(R.id.content, contactsFragment);
