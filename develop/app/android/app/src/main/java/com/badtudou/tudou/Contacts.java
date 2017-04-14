@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.provider.ContactsContract.Groups;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -28,10 +29,12 @@ public class Contacts {
     private ContentResolver contentResolver = null;
     private Cursor cursor = null;
     private List<String> contactsList = null;
+    private List<String> groupList = null;
     private Activity activity;
     Contacts(Activity activity) {
         this.activity = activity;
         this.contactsList = new ArrayList<>();
+        this.groupList = new ArrayList<>();
         requireReadPermission();
     }
 
@@ -53,6 +56,28 @@ public class Contacts {
             }
         return this.contactsList;
     }
+
+    public List<String> getContactsGroupList(){
+        try {
+            uri = Groups.CONTENT_URI;
+            contentResolver =  activity.getContentResolver();
+            cursor = contentResolver.query(uri, null, null ,null, null);
+            if(cursor != null){
+                while (cursor.moveToNext()){
+                    String displayName = cursor.getString(cursor.getColumnIndex(Groups.TITLE));
+                    String number = cursor.getString(cursor.getColumnIndex(Groups._ID));
+                    groupList.add(displayName+":"+number);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return this.groupList;
+
+    }
+
 
     private  void requireReadPermission(){
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){

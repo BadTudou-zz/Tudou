@@ -2,6 +2,7 @@
     <string name="app_name">土豆通讯录</string>
     <string name="title_history">History</string>
     <string name="title_contacts">Contacts</string>
+    <string name="title_group">Group</string>
     <string name="title_call">Call</string>
     <string name="title_activity_login">Sign in</string>
     <string name="app_copyright">Copyright © 2017 BadTudou. All rights reserved.</string>
@@ -11,6 +12,7 @@
     <string name="action_sign_in">Sign in</string>
     <string name="action_forget_password">Forget password?</string>
     <string name="action_signin_with_socil">Other</string>
+    <string name="action_add_group_or_contacts">Add</string>
     <string name="prompt_signin_with_socil">Use social account login</string>
     <string name="action_sign_in_remenber">Remenber Me</string>
     <string name="action_sign_in_short">Sign in</string>

@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
 
 
 /**
@@ -22,6 +26,12 @@ public class ContactsGroupFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private Contacts contacts;
+    private List<String> contactsGroupList;
+    private ArrayAdapter<String> adapter;
+    private View view;
+    private ListView listView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -63,8 +73,19 @@ public class ContactsGroupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts_group, container, false);
+        view = inflater.inflate(R.layout.fragment_contacts_group, container, false);
+        listView = (ListView)view.findViewById(R.id.contents_group);
+        //test
+        contacts = new Contacts(getActivity());
+        contactsGroupList = contacts.getContactsGroupList();
+
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, contactsGroupList);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

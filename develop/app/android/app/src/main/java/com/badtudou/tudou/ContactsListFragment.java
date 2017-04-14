@@ -78,7 +78,7 @@ public class ContactsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
-        listView = (ListView)view.findViewById(R.id.content_list);
+        listView = (ListView)view.findViewById(R.id.contents_list);
         //test
         contacts = new Contacts(getActivity());
         contactsList = contacts.getContactsList();

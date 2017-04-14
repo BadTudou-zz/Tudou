@@ -14,12 +14,14 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements
         HistoryFragment.OnFragmentInteractionListener,
         ContactsListFragment.OnFragmentInteractionListener,
+        ContactsGroupFragment.OnFragmentInteractionListener,
         CallFragment.OnFragmentInteractionListener {
 
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
     private HistoryFragment historyFragment;
-    private ContactsListFragment contactsFragment;
+    private ContactsListFragment contactsListFragment;
+    private ContactsGroupFragment contactsGroupFragment;
     private CallFragment callFragment;
     private android.support.v4.app.FragmentTransaction transaction;
 
@@ -39,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements
                     return true;
 
                 case R.id.navigation_contacts:
-                    if (contactsFragment == null) {
+                    if ((contactsListFragment == null) || (contactsGroupFragment == null)) {
                         initFragments();
                     }
                     hideFragments();
-                    showFrame(contactsFragment);
+                    showFrame(contactsGroupFragment);
                     return true;
 
                 case R.id.navigation_call:
@@ -76,16 +78,19 @@ public class MainActivity extends AppCompatActivity implements
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
         historyFragment = new HistoryFragment();
-        contactsFragment = new ContactsListFragment();
+        contactsListFragment = new ContactsListFragment();
+        contactsGroupFragment = new ContactsGroupFragment();
         callFragment = new CallFragment();
         transaction.add(R.id.content, historyFragment);
-        transaction.add(R.id.content, contactsFragment);
+        transaction.add(R.id.content, contactsListFragment);
+        transaction.add(R.id.content, contactsGroupFragment);
         transaction.add(R.id.content, callFragment);
 
     }
 
     private void hideFragments(){
-        transaction.hide(contactsFragment);
+        transaction.hide(contactsListFragment);
+        transaction.hide(contactsGroupFragment);
         transaction.hide(historyFragment);
         transaction.hide(callFragment);
     }
