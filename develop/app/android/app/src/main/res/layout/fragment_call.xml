@@ -33,21 +33,18 @@
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button1"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_1_no_vm" />
 
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button2"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_2" />
 
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button3"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_3" />
 
@@ -65,21 +62,18 @@
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button4"
-            android:onClick="onClick"
             style="@style/DialerButton"
             app:srcCompat="@drawable/dial_num_4" />
 
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button5"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_5" />
 
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button6"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_6" />
 
@@ -95,19 +89,16 @@
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button7"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_7" />
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button8"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_8" />
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button9"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_9" />
     </LinearLayout>
@@ -120,19 +111,16 @@
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/ButtonStar"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_star" />
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/Button0"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_0" />
         <ImageButton
             android:layout_weight="1"
             android:id="@+id/ButtonHash"
-            android:onClick="onClick"
             style="@style/DialerButton"
             android:src="@drawable/dial_num_pound" />
     </LinearLayout>
@@ -143,14 +131,12 @@
         android:layout_below="@id/Row4">
         <ImageButton
             android:id="@+id/ButtonCall"
-            android:onClick="onClick"
             android:layout_height="fill_parent"
             android:layout_weight="2"
             android:src="@drawable/ic_dial_action_call"
             style="@style/DialerButton"/>
         <ImageButton
             android:id="@+id/ButtonDelete"
-            android:onClick="onClick"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_dial_action_delete"

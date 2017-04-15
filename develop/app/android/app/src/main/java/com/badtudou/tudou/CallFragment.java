@@ -4,9 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -17,8 +23,8 @@ import android.view.ViewGroup;
  * Use the {@link CallFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CallFragment extends Fragment  {
-    // TODO: Rename parameter arguments, choose names that match
+public class CallFragment extends Fragment implements View.OnClickListener {
+    // TODO: Rename parameter arguments, choose  names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -26,6 +32,9 @@ public class CallFragment extends Fragment  {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private View view;
+    private Map<String, Integer> strMapInt;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +73,9 @@ public class CallFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_call, container, false);
+        view = inflater.inflate(R.layout.fragment_call, container, false);
+        initViews();
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +100,49 @@ public class CallFragment extends Fragment  {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.d("Test", "Click callFragment button");
+        Integer id = v.getId();
+        String idName = v.getResources().getResourceEntryName(id);
+        Character key = idName.charAt(idName.length()-1);
+
+        if(strMapInt.containsKey(key.toString())){
+            // 0-9, *, #
+            Log.d("Test", "has"+":"+key);
+        }else
+        {
+            // Call, Delete
+            Log.d("Test", "has not"+ key);
+        }
+        //if(strMapInt.)
+        //switch (v.)
+    }
+
+    private void initViews(){
+        strMapInt = new HashMap<String, Integer>();
+        strMapInt.put("0", R.id.Button0);
+        strMapInt.put("1", R.id.Button1);
+        strMapInt.put("2", R.id.Button2);
+        strMapInt.put("3", R.id.Button3);
+        strMapInt.put("4", R.id.Button4);
+        strMapInt.put("5", R.id.Button5);
+        strMapInt.put("6", R.id.Button6);
+        strMapInt.put("7", R.id.Button7);
+        strMapInt.put("8", R.id.Button8);
+        strMapInt.put("9", R.id.Button9);
+        strMapInt.put("r", R.id.ButtonStar);
+        strMapInt.put("h", R.id.ButtonHash);
+        strMapInt.put("call", R.id.ButtonCall);
+        strMapInt.put("delete", R.id.ButtonDelete);
+
+        // set buttons click listener
+        for (Map.Entry<String, Integer> entry : strMapInt.entrySet()) {
+            ImageButton imageButton = (ImageButton)view.findViewById(entry.getValue());
+            imageButton.setOnClickListener(this);
+        }
     }
 
     /**
