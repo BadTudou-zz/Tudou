@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import java.util.HashMap;
@@ -36,7 +37,8 @@ public class CallFragment extends Fragment implements View.OnClickListener {
 
     private View view;
     private Map<String, Integer> strMapInt;
-    private String phone;
+    private String phone ="";
+    private EditText editTextPhone;
 
     private OnFragmentInteractionListener mListener;
 
@@ -114,7 +116,14 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         if(strMapInt.containsKey(key.toString())){
             // 0-9, *, #
             Log.d("Test", "has"+":"+key);
+            if(key.equals('r'))
+                key = '*';
+
+            if(key.equals('h'))
+                key = '#';
+
             phone += key;
+            editTextPhone.setText(phone);
         }else
         {
             switch (key.toString()){
@@ -125,7 +134,8 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                     break;
                 // delete
                 case "e":
-                    this.phone = "";
+                    phone = phone.substring(0, phone.length()-1);
+                    editTextPhone.setText(phone);
                     break;
             }
             // Call, Delete
@@ -157,6 +167,8 @@ public class CallFragment extends Fragment implements View.OnClickListener {
             ImageButton imageButton = (ImageButton)view.findViewById(entry.getValue());
             imageButton.setOnClickListener(this);
         }
+
+        editTextPhone = (EditText)view.findViewById(R.id.CallEditTextPhoneNumber);
     }
 
     /**
