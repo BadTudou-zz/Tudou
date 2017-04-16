@@ -26,6 +26,8 @@ public class HistoryFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private View view;
+    private Ca3log ca3log;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +66,11 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        view =  inflater.inflate(R.layout.fragment_history, container, false);
+        ca3log = new Ca3log(getActivity());
+        ca3log.requireReadPermission();
+        ca3log.getCallsList();
+        return  view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

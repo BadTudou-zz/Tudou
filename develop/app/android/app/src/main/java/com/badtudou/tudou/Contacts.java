@@ -35,12 +35,12 @@ public class Contacts {
         this.activity = activity;
         this.contactsList = new ArrayList<>();
         this.groupList = new ArrayList<>();
+        contentResolver =  activity.getContentResolver();
         requireReadPermission();
     }
 
     public List<String> getContactsList(){
         try {
-                contentResolver =  activity.getContentResolver();
                 cursor = contentResolver.query(uri, null, null ,null, null);
                 if(cursor != null){
                     while (cursor.moveToNext()){
@@ -60,7 +60,6 @@ public class Contacts {
     public List<String> getContactsGroupList(){
         try {
             uri = Groups.CONTENT_URI;
-            contentResolver =  activity.getContentResolver();
             cursor = contentResolver.query(uri, null, null ,null, null);
             if(cursor != null){
                 while (cursor.moveToNext()){
