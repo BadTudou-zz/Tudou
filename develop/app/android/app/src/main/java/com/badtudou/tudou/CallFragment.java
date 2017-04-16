@@ -1,5 +1,6 @@
 package com.badtudou.tudou;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
 
     private View view;
     private Map<String, Integer> strMapInt;
+    private String phone;
 
     private OnFragmentInteractionListener mListener;
 
@@ -112,8 +114,20 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         if(strMapInt.containsKey(key.toString())){
             // 0-9, *, #
             Log.d("Test", "has"+":"+key);
+            phone += key;
         }else
         {
+            switch (key.toString()){
+                // call
+                case "l":
+                    Log.d("Test", "call button");
+                    new Call((Activity)view.getContext()).callPhone(phone);
+                    break;
+                // delete
+                case "e":
+                    this.phone = "";
+                    break;
+            }
             // Call, Delete
             Log.d("Test", "has not"+ key);
         }

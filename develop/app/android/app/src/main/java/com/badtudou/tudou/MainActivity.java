@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements
     private ContactsListFragment contactsListFragment;
     private ContactsGroupFragment contactsGroupFragment;
     private CallFragment callFragment;
+    private Call call;
     private android.support.v4.app.FragmentTransaction transaction;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        call = new Call(this);
+        call.requireCallPermission();
         initFragments();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
