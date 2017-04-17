@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements
                         initFragments();
                     }
                     hideFragments();
-                    showFrame(contactsGroupFragment);
+                    showFrame(contactsListFragment);
                     return true;
 
                 case R.id.navigation_call:

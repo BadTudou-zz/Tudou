@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,8 +34,8 @@ public class ContactsListFragment extends Fragment {
     private String mParam2;
 
     private Contacts contacts;
-    private List<String> contactsList;
-    private ArrayAdapter<String> adapter;
+    private List<Map<String,String>> contactsList;
+    private SimpleAdapter adapter;
     private View view;
     private ListView listView;
 
@@ -72,7 +74,6 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,7 +84,8 @@ public class ContactsListFragment extends Fragment {
         contacts = new Contacts(getActivity());
         contactsList = contacts.getContactsList();
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, contactsList);
+        adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
+                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         return view;

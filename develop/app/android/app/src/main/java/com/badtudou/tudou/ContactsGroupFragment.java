@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -28,8 +30,8 @@ public class ContactsGroupFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private Contacts contacts;
-    private List<String> contactsGroupList;
-    private ArrayAdapter<String> adapter;
+    private List<Map<String,String>> contactsGroupList;
+    private SimpleAdapter adapter;
     private View view;
     private ListView listView;
 
@@ -79,9 +81,10 @@ public class ContactsGroupFragment extends Fragment {
         listView = (ListView)view.findViewById(R.id.contents_group);
         //test
         contacts = new Contacts(getActivity());
-        contactsGroupList = contacts.getContactsGroupList();
+        //contactsGroupList = contacts.getContactsGroupList();
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, contactsGroupList);
+        adapter = new SimpleAdapter(view.getContext(), contactsGroupList, R.layout.group_list_item,
+                new String[]{"name", "id"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

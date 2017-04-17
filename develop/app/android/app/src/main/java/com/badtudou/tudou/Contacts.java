@@ -18,18 +18,29 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by badtudou on 12/04/2017.
  */
+class ContactsData{
+    public String name;
+    public String number;
+
+    public  ContactsData(String name, String number){
+        this.name = name;
+        this.number = number;
+    }
+}
 
 public class Contacts {
     private Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private ContentResolver contentResolver = null;
     private Cursor cursor = null;
-    private List<String> contactsList = null;
-    private List<String> groupList = null;
+    private List<Map<String, String>> contactsList = null;
+    private List<Map<String, String>> groupList = null;
     private Activity activity;
     Contacts(Activity activity) {
         this.activity = activity;
@@ -39,14 +50,17 @@ public class Contacts {
         requireReadPermission();
     }
 
-    public List<String> getContactsList(){
+    public List<Map<String, String>> getContactsList(){
         try {
                 cursor = contentResolver.query(uri, null, null ,null, null);
                 if(cursor != null){
                     while (cursor.moveToNext()){
                         String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                         String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        contactsList.add(displayName+":"+number);
+                        Map<String, String> map = new HashMap<>();
+                        map.put("name", displayName);
+                        map.put("number",number);
+                        contactsList.add(cursor.getPosition(), map);
                     }
                 }
             }catch (Exception e){
@@ -57,15 +71,18 @@ public class Contacts {
         return this.contactsList;
     }
 
-    public List<String> getContactsGroupList(){
+    public List<Map<String, String>> getContactsGroupList(){
         try {
             uri = Groups.CONTENT_URI;
             cursor = contentResolver.query(uri, null, null ,null, null);
             if(cursor != null){
                 while (cursor.moveToNext()){
                     String displayName = cursor.getString(cursor.getColumnIndex(Groups.TITLE));
-                    String number = cursor.getString(cursor.getColumnIndex(Groups._ID));
-                    groupList.add(displayName+":"+number);
+                    String id = cursor.getString(cursor.getColumnIndex(Groups._ID));
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", displayName);
+                    map.put("id",id);
+                    groupList.add(cursor.getPosition(), map);
                 }
             }
         }catch (Exception e){
