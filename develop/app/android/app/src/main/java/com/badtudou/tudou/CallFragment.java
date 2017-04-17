@@ -39,7 +39,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
     private Map<String, Integer> strMapInt;
     private String phone ="";
     private EditText editTextPhone;
-
+    private ImageButton buttonBackSpace;
     private OnFragmentInteractionListener mListener;
 
     public CallFragment() {
@@ -134,8 +134,10 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                     break;
                 // delete
                 case "e":
-                    phone = phone.substring(0, phone.length()-1);
-                    editTextPhone.setText(phone);
+                    if(phone.length() != 0){
+                        phone = phone.substring(0, phone.length()-1);
+                        editTextPhone.setText(phone);
+                    }
                     break;
             }
             // Call, Delete
@@ -169,6 +171,15 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         }
 
         editTextPhone = (EditText)view.findViewById(R.id.CallEditTextPhoneNumber);
+        buttonBackSpace = (ImageButton)view.findViewById(R.id.ButtonDelete);
+        buttonBackSpace.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                phone = "";
+                editTextPhone.setText(phone);
+                return false;
+            }
+        });
     }
 
     /**
