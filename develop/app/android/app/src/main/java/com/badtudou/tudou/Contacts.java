@@ -25,16 +25,6 @@ import java.util.Map;
 /**
  * Created by badtudou on 12/04/2017.
  */
-class ContactsData{
-    public String name;
-    public String number;
-
-    public  ContactsData(String name, String number){
-        this.name = name;
-        this.number = number;
-    }
-}
-
 public class Contacts {
     private Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private ContentResolver contentResolver = null;

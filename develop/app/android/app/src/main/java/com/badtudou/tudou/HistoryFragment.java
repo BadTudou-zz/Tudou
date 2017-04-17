@@ -2,11 +2,18 @@ package com.badtudou.tudou;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -28,6 +35,9 @@ public class HistoryFragment extends Fragment {
     private String mParam2;
     private View view;
     private Ca3log ca3log;
+    private List<Map<String, String>> ca3list;
+    private SimpleAdapter adapter;
+    private ListView listView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,14 +72,19 @@ public class HistoryFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_history, container, false);
         ca3log = new Ca3log(getActivity());
-        ca3log.requireReadPermission();
-        ca3log.getCallsList();
+        ca3list = ca3log.getCallsList();
+        listView = (ListView)view.findViewById(R.id.call_list);
+        adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
+                new String[]{"number"}, new int[]{R.id.txt_number});
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         return  view;
     }
 
