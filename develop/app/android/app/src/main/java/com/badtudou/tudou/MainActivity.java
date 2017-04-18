@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     hideFragments();
                     showFrame(historyFragment);
+                    setNavigationBar("history");
                     return true;
 
                 case R.id.navigation_contacts:
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     hideFragments();
                     showFrame(contactsListFragment);
+                    setNavigationBar("contacts");
                     return true;
 
                 case R.id.navigation_call:
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     hideFragments();
                     showFrame(callFragment);
+                    setNavigationBar("call");
                     return true;
             }
             return false;
@@ -102,6 +106,28 @@ public class MainActivity extends AppCompatActivity implements
         transaction.replace(R.id.content, fragmentame);
         transaction.show(fragmentame);
         transaction.commit();
+    }
+
+    private void setNavigationBar(String bar){
+        int id_color_off = R.color.colorActiviBarOff;
+        int id_color_on = R.color.colorActiviBarOn;
+        TextView textViewHistory = (TextView)findViewById(R.id.activibarHistory);
+        TextView textViewContacts = (TextView)findViewById(R.id.activibarContacts);
+        TextView textViewCall = (TextView)findViewById(R.id.activibarCall);
+        textViewHistory.setBackgroundResource(id_color_off);
+        textViewContacts.setBackgroundResource(id_color_off);
+        textViewCall.setBackgroundResource(id_color_off);
+        switch (bar){
+            case "call":
+                textViewCall.setBackgroundResource(id_color_on);
+                break;
+            case "history":
+                textViewHistory.setBackgroundResource(id_color_on);
+                break;
+            case "contacts":
+                textViewContacts.setBackgroundResource(id_color_on);
+                break;
+        }
     }
 
     @Override

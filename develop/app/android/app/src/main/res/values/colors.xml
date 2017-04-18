@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="text_main">#ffdddddd</color>
+    <color name="colorActiviBarOn">#EA8010</color>
+    <color name="colorActiviBarOff">#57D2F7</color>
 </resources>
