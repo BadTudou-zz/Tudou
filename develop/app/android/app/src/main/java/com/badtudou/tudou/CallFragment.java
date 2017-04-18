@@ -95,7 +95,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         adapter = new SimpleAdapter(view.getContext(), contactsMatchList , R.layout.contacts_list_item,
                 new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
         listView.setAdapter(adapter);
-        //adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
         return view;
     }
 
@@ -203,8 +203,8 @@ public class CallFragment extends Fragment implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("Test", "input number change"+editTextPhone.getText().toString());
-                contactsMatchList = contacts.getContactsByName(editTextPhone.getText().toString());
-                listView.setAdapter(adapter);
+                contactsMatchList.clear();
+                contactsMatchList.addAll(contacts.getContactsByName(editTextPhone.getText().toString()));
                 Log.d("Test", contactsMatchList.toString());
                 adapter.notifyDataSetChanged();
             }
