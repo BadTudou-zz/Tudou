@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,10 +43,13 @@ public class CallFragment extends Fragment implements View.OnClickListener {
 
     private View view;
     private Map<String, Integer> strMapInt;
-    private String phone ="";
     private EditText editTextPhone;
     private ImageButton buttonBackSpace;
     private OnFragmentInteractionListener mListener;
+    private Contacts contacts;
+    private SimpleAdapter adapter;
+    private ListView listView;
+    private List<Map<String,String>> contactsMatchList;
 
     public CallFragment() {
         // Required empty public constructor
@@ -79,6 +88,14 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_call, container, false);
         initViews();
+        contacts = new Contacts(getActivity());
+        listView = (ListView)view.findViewById(R.id.contents_match_list);
+        contactsMatchList = new ArrayList<>();
+        contactsMatchList = contacts.getContactsByName("John");
+        adapter = new SimpleAdapter(view.getContext(), contactsMatchList , R.layout.contacts_list_item,
+                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
+        listView.setAdapter(adapter);
+        //adapter.notifyDataSetChanged();
         return view;
     }
 
@@ -122,21 +139,21 @@ public class CallFragment extends Fragment implements View.OnClickListener {
             if(key.equals('h'))
                 key = '#';
 
-            phone += key;
-            editTextPhone.setText(phone);
+            editTextPhone.setText(editTextPhone.getText().toString()+key);
         }else
         {
             switch (key.toString()){
                 // call
                 case "l":
                     Log.d("Test", "call button");
-                    new Call((Activity)view.getContext()).callPhone(phone);
+                    new Call((Activity)view.getContext()).callPhone(editTextPhone.getText().toString());
                     break;
                 // delete
                 case "e":
-                    if(phone.length() != 0){
-                        phone = phone.substring(0, phone.length()-1);
-                        editTextPhone.setText(phone);
+                    if(editTextPhone.getText().toString().length() != 0){
+                        String text = editTextPhone.getText().toString();
+                        text = text.substring(0, text.length()-1);
+                        editTextPhone.setText(text);
                     }
                     break;
             }
@@ -171,12 +188,33 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         }
 
         editTextPhone = (EditText)view.findViewById(R.id.CallEditTextPhoneNumber);
+        // set edittext value change listener
+        editTextPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("Test", "input number change"+editTextPhone.getText().toString());
+                contactsMatchList = contacts.getContactsByName(editTextPhone.getText().toString());
+                listView.setAdapter(adapter);
+                Log.d("Test", contactsMatchList.toString());
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         buttonBackSpace = (ImageButton)view.findViewById(R.id.ButtonDelete);
         buttonBackSpace.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                phone = "";
-                editTextPhone.setText(phone);
+                editTextPhone.setText("");
                 return false;
             }
         });

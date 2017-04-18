@@ -84,6 +84,31 @@ public class Contacts {
 
     }
 
+    public List<Map<String, String>> getContactsByName(String name){
+        List<Map<String, String>> list = new ArrayList<>();
+        String[] projection = null;
+        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?";
+        String[] selectionArgs = {name};
+        String sortOder = null;
+        try {
+            cursor = contentResolver.query(uri, projection, selection ,selectionArgs, sortOder);
+            if(cursor != null){
+                while (cursor.moveToNext()){
+                    String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", displayName);
+                    map.put("number",number);
+                    list.add(cursor.getPosition(), map);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return list;
+    }
 
     private  void requireReadPermission(){
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
