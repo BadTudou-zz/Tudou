@@ -205,7 +205,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                 Log.d("Test", "input number change"+editTextPhone.getText().toString());
                 contactsMatchList.clear();
                 contactsMatchList.addAll(contacts.getContactsByName(editTextPhone.getText().toString()));
-                Log.d("Test", contactsMatchList.toString());
+                contactsMatchList.addAll(contacts.getContactsByNumber(s.toString()));
                 adapter.notifyDataSetChanged();
             }
         });

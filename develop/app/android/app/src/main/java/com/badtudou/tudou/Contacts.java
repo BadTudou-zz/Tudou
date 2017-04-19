@@ -15,6 +15,7 @@ import android.provider.ContactsContract.Groups;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -40,25 +41,17 @@ public class Contacts {
         requireReadPermission();
     }
 
+
     public List<Map<String, String>> getContactsList(){
-        try {
-                cursor = contentResolver.query(uri, null, null ,null, null);
-                if(cursor != null){
-                    while (cursor.moveToNext()){
-                        String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        Map<String, String> map = new HashMap<>();
-                        map.put("name", displayName);
-                        map.put("number",number);
-                        contactsList.add(cursor.getPosition(), map);
-                    }
-                }
-            }catch (Exception e){
-            e.printStackTrace();
-            }finally {
-                cursor.close();
-            }
-        return this.contactsList;
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = null;
+        String selection = null;
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = null;
+        String sortOrder = null;
+        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
     public List<Map<String, String>> getContactsGroupList(){
@@ -85,29 +78,27 @@ public class Contacts {
     }
 
     public List<Map<String, String>> getContactsByName(String name){
-        List<Map<String, String>> list = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = null;
-        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?";
-        String[] selectionArgs = {name};
-        String sortOder = null;
-        try {
-            cursor = contentResolver.query(uri, projection, selection ,selectionArgs, sortOder);
-            if(cursor != null){
-                while (cursor.moveToNext()){
-                    String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    Map<String, String> map = new HashMap<>();
-                    map.put("name", displayName);
-                    map.put("number",number);
-                    list.add(cursor.getPosition(), map);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            cursor.close();
-        }
-        return list;
+        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE ?";
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = {"%"+name+"%"};;
+        String sortOrder = null;
+        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+       return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
+    }
+
+    public List<Map<String, String>> getContactsByNumber(String number){
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = null;
+        String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " LIKE ?";
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = {"%"+number+"%"};
+        String sortOrder = null;
+        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
     private  void requireReadPermission(){
