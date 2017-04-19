@@ -1,8 +1,13 @@
 package com.badtudou.tudou;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +20,17 @@ import java.util.Map;
 
 public class Util {
 
+    /**
+     *
+     * @param contentResolver   内容提供者
+     * @param uri               Uri
+     * @param projection        字段列表
+     * @param itemList          字段：获取与请求的key
+     * @param selection         条件
+     * @param selectionArgs     条件值
+     * @param sortOrder         排序字段
+     * @return                  List键值对
+     */
     public static List<Map<String, String>> ContentResolverSearch(ContentResolver contentResolver, Uri uri, String[] projection, Map<String, String> itemList, String selection, String[] selectionArgs, String sortOrder){
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = null;
@@ -40,5 +56,16 @@ public class Util {
                 cursor.close();
         }
         return list;
+    }
+
+    /**
+     * 请求权限
+     * @param activity   activity
+     * @param permission 权限名
+     */
+    public static void PermissionRequire(Activity activity, String permission){
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, 1);
+        }
     }
 }

@@ -30,15 +30,11 @@ public class Contacts {
     private Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private ContentResolver contentResolver = null;
     private Cursor cursor = null;
-    private List<Map<String, String>> contactsList = null;
-    private List<Map<String, String>> groupList = null;
     private Activity activity;
     Contacts(Activity activity) {
         this.activity = activity;
-        this.contactsList = new ArrayList<>();
-        this.groupList = new ArrayList<>();
         contentResolver =  activity.getContentResolver();
-        requireReadPermission();
+        Util.PermissionRequire(activity, Manifest.permission.READ_CONTACTS);
     }
 
 
@@ -54,27 +50,16 @@ public class Contacts {
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
-    public List<Map<String, String>> getContactsGroupList(){
-        try {
-            uri = Groups.CONTENT_URI;
-            cursor = contentResolver.query(uri, null, null ,null, null);
-            if(cursor != null){
-                while (cursor.moveToNext()){
-                    String displayName = cursor.getString(cursor.getColumnIndex(Groups.TITLE));
-                    String id = cursor.getString(cursor.getColumnIndex(Groups._ID));
-                    Map<String, String> map = new HashMap<>();
-                    map.put("name", displayName);
-                    map.put("id",id);
-                    groupList.add(cursor.getPosition(), map);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            cursor.close();
-        }
-        return this.groupList;
-
+    public List<Map<String, String>> getGroupsList(){
+        Uri uri = Groups.CONTENT_URI;
+        String[] projection = null;
+        String selection = null;
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = null;
+        String sortOrder = null;
+        itemList.put("id", Groups._ID);
+        itemList.put("title", Groups.TITLE);
+        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
     public List<Map<String, String>> getContactsByName(String name){
@@ -101,9 +86,4 @@ public class Contacts {
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
-    private  void requireReadPermission(){
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CONTACTS}, 1);
-        }
-    }
 }

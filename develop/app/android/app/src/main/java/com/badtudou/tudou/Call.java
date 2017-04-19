@@ -20,6 +20,7 @@ public class Call {
 
     Call(Activity activity) {
         this.activity = activity;
+        Util.PermissionRequire(activity, Manifest.permission.CALL_PHONE);
     }
 
     public void callPhone(String phone) {
@@ -36,12 +37,4 @@ public class Call {
         }
         activity.getApplication().startActivity(intent);
     }
-
-    public void requireCallPermission(){
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
-
-        }
-    }
-
-
 }

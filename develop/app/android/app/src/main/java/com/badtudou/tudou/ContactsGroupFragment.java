@@ -30,7 +30,7 @@ public class ContactsGroupFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private Contacts contacts;
-    private List<Map<String,String>> contactsGroupList;
+    private List<Map<String,String>> groupList;
     private SimpleAdapter adapter;
     private View view;
     private ListView listView;
@@ -81,9 +81,9 @@ public class ContactsGroupFragment extends Fragment {
         listView = (ListView)view.findViewById(R.id.contents_group);
         //test
         contacts = new Contacts(getActivity());
-        //contactsGroupList = contacts.getContactsGroupList();
+        groupList = contacts.getGroupsList();
 
-        adapter = new SimpleAdapter(view.getContext(), contactsGroupList, R.layout.group_list_item,
+        adapter = new SimpleAdapter(view.getContext(), groupList, R.layout.group_list_item,
                 new String[]{"name", "id"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

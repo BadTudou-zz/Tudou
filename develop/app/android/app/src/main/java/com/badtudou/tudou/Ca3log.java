@@ -37,13 +37,13 @@ public class Ca3log {
         this.activity = activity;
         contentResolver = activity.getContentResolver();
         this.ca3list = new ArrayList<>();
-        requireReadPermission();
+        Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Map<String, String>> getCallsList(){
         try {
-            requireReadPermission();
+
             cursor = contentResolver.query(uri, null, null ,null, null);
             if(cursor != null){
                 while (cursor.moveToNext()){
@@ -71,9 +71,4 @@ public class Ca3log {
 
     }
 
-    public void requireReadPermission(){
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CALL_LOG}, 1);
-        }
-    }
 }
