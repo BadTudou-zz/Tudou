@@ -27,6 +27,8 @@ import java.util.Map;
  * Created by badtudou on 12/04/2017.
  */
 public class Contacts {
+    public static final String NAME = "name";
+    public static final String NUMBER = "number";
     private Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private ContentResolver contentResolver = null;
     private Cursor cursor = null;

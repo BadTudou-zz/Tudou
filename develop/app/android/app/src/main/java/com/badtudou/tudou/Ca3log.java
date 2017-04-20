@@ -29,45 +29,27 @@ import java.util.Map;
 public class Ca3log {
     private Uri uri = CallLog.Calls.CONTENT_URI;
     private ContentResolver contentResolver = null;
-    private Cursor cursor = null;
     private Activity activity;
-    private List<Map<String, String>> ca3list;
 
     Ca3log(Activity activity) {
         this.activity = activity;
         contentResolver = activity.getContentResolver();
-        this.ca3list = new ArrayList<>();
         Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Map<String, String>> getCallsList(){
-        try {
-
-            cursor = contentResolver.query(uri, null, null ,null, null);
-            if(cursor != null){
-                while (cursor.moveToNext()){
-                    String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                    String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                    String duration = cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION));
-                    String date = cursor.getString(cursor.getColumnIndex(CallLog.Calls.DATE));
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    date = simpleDateFormat.format(Long.parseLong(date));
-                    Map<String, String> map = new HashMap<>();
-                    map.put("number", number);
-                    map.put("name",name);
-                    map.put("duration",duration);
-                    map.put("date",date);
-                    ca3list.add(cursor.getPosition(), map);
-                    Log.d("Test", "number:"+ number+" name:"+name+" duration:"+duration+" date:"+date);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            cursor.close();
-        }
-        return this.ca3list;
+        Uri uri = CallLog.Calls.CONTENT_URI;
+        String[] projection = null;
+        String selection = null;
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = null;
+        String sortOrder = null;
+        itemList.put("number", CallLog.Calls.NUMBER);
+        itemList.put("name", CallLog.Calls.CACHED_NAME);
+        itemList.put("duration", CallLog.Calls.DURATION);
+        itemList.put("date", CallLog.Calls.DATE);
+        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
 
     }
 

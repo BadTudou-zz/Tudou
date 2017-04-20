@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -90,6 +91,13 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         initViews();
         contacts = new Contacts(getActivity());
         listView = (ListView)view.findViewById(R.id.contents_match_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map<String, String> contact = contactsMatchList.get(position);
+                editTextPhone.setText(contact.get(Contacts.NUMBER));
+            }
+        });
         contactsMatchList = new ArrayList<>();
         contactsMatchList = contacts.getContactsByName("John");
         adapter = new SimpleAdapter(view.getContext(), contactsMatchList , R.layout.contacts_list_item,
