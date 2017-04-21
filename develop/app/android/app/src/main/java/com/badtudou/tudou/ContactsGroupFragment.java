@@ -4,12 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +45,7 @@ public class ContactsGroupFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private ButtonClickListener buttonClickListener;
 
     public ContactsGroupFragment() {
         // Required empty public constructor
@@ -88,6 +94,9 @@ public class ContactsGroupFragment extends Fragment {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        initViews();
         return view;
     }
 
@@ -107,12 +116,40 @@ public class ContactsGroupFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
+        if (context instanceof  ButtonClickListener){
+            Log.d("Test", "实现接口");
+            buttonClickListener = (ButtonClickListener) context;
+
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void initViews(){
+        ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
+        TextView textView_title = (TextView)view.findViewById(R.id.text_group_or_contacts);
+
+        button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_add_contact);
+            }
+        });
+
+        button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_switch_contact_style);
+            }
+        });
+
+        textView_title.setText(R.string.title_group);
     }
 
     /**

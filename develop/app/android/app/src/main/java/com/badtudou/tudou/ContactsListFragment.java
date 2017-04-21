@@ -46,6 +46,7 @@ public class ContactsListFragment extends Fragment {
     private ListView listView;
 
     private OnFragmentInteractionListener mListener;
+    private ButtonClickListener buttonClickListener;
 
     public ContactsListFragment() {
         // Required empty public constructor
@@ -119,6 +120,11 @@ public class ContactsListFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if (context instanceof  ButtonClickListener){
+            Log.d("Test", "实现接口");
+            buttonClickListener = (ButtonClickListener) context;
+
+        }
 
     }
 
@@ -135,14 +141,14 @@ public class ContactsListFragment extends Fragment {
         button_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Test", "click new");
+                buttonClickListener.showMessage(R.id.button_add_contact);
             }
         });
 
         button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                buttonClickListener.showMessage(R.id.button_switch_contact_style);
             }
         });
     }

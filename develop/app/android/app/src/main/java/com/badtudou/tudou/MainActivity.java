@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity implements
         ContactsListFragment.OnFragmentInteractionListener,
         ContactsGroupFragment.OnFragmentInteractionListener,
         CallFragment.OnFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        ButtonClickListener{
 
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
         contactsListFragment = new ContactsListFragment();
         contactsGroupFragment = new ContactsGroupFragment();
         callFragment = new CallFragment();
+        Bundle args=new Bundle();
         transaction.add(R.id.content, historyFragment);
         transaction.add(R.id.content, contactsListFragment);
         transaction.add(R.id.content, contactsGroupFragment);
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showFrame(Fragment fragmentame){
+        transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.content, fragmentame);
         transaction.show(fragmentame);
         transaction.commit();
@@ -166,5 +169,30 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+    @Override
+    public void showMessage(int id) {
+        Log.d("Test", String.valueOf(id));
+        Log.d("Test", String.valueOf(R.id.button_switch_contact_style));
+        switch (id){
+            case R.id.button_switch_contact_style:
+                hideFragments();
+                if (contactsListFragment.isVisible()){
+                    Log.d("Test", "切换到群组");
+                    if (contactsGroupFragment == null){
+                        initFragments();
+                    }
+                    showFrame(contactsGroupFragment);
+                }
+                else{
+                    Log.d("Test", "切换到列表");
+                    if (contactsListFragment == null){
+                        initFragments();
+                    }
+                    showFrame(contactsListFragment);
+                }
+                break;
+        }
     }
 }
