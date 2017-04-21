@@ -4,11 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -89,6 +94,10 @@ public class ContactsListFragment extends Fragment {
                 new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        initViews();
         return view;
 
 
@@ -117,6 +126,25 @@ public class ContactsListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void initViews(){
+        ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
+
+        button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Test", "click new");
+            }
+        });
+
+        button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
     }
 
     /**

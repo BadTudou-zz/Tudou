@@ -6,4 +6,6 @@
     <color name="text_main">#ffdddddd</color>
     <color name="colorActiviBarOn">#EA8010</color>
     <color name="colorActiviBarOff">#57D2F7</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000</color>
 </resources>
