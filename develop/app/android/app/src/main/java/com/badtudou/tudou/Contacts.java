@@ -47,6 +47,7 @@ public class Contacts {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = null;
         String sortOrder = null;
+        itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);

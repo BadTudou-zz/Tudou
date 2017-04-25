@@ -1,9 +1,11 @@
 package com.badtudou.tudou;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -157,7 +159,10 @@ public class ContactsListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                Log.d("Test", contactsList.get(position).toString());
+                Long personId = Long.parseLong(contactsList.get(position).get("id"));
+                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
+                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
                 startActivity(intent);
             }
         });
@@ -178,4 +183,5 @@ public class ContactsListFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
