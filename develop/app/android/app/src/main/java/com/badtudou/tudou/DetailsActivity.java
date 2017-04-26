@@ -1,10 +1,8 @@
 package com.badtudou.tudou;
 
-import android.Manifest;
-import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Intent;
-import android.content.Loader;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,19 +12,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+
+import com.badtudou.model.*;
+import com.badtudou.model.Contacts;
+import com.badtudou.tudou.databinding.ActivityDetailsBinding;
 
 import java.util.HashMap;
 import java.util.Map;
 public class DetailsActivity extends AppCompatActivity {
 
-    private Map<String, String> contacts;
+    private Contacts contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-        this.contacts = new HashMap<>();
-
+        ActivityDetailsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -50,8 +52,34 @@ public class DetailsActivity extends AppCompatActivity {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = {String.valueOf(id)};
         String sortOrder = null;
+        itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
-        this.contacts = Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
+        itemList.put("email", ContactsContract.CommonDataKinds.Email.DATA);
+        Map<String, String> map = new HashMap<>();
+        map =  Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
+        Log.d("Test", map.toString());
+        contacts = new Contacts();
+        //contacts = new Contacts(id1, dispalyname,phone, email);
+        map2Obj(map, contacts);
+        binding.setContacts(contacts);
+        //Log.d("Test", ));
+        //com.badtudou.model.Contacts user = new User(contacts.get("name"), "User");
+        //binding.setContacts(user);
+    }
+
+    private void initViews(){
+
+        TextView text_phone = (TextView)findViewById(R.id.text_phone);
+        TextView text_email = (TextView)findViewById(R.id.text_email);
+    }
+
+    private void map2Obj(Map<String, String> map, Contacts contacts){
+        long id = Long.valueOf(map.get("id"));
+        String dispalyname = map.get("name");
+        String phone = map.get("number");
+        String email = map.get("email");
+        contacts.set(id, dispalyname, phone, email);
+
     }
 }
