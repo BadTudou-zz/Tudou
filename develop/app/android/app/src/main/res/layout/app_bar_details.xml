@@ -9,17 +9,17 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white">
+        android:background="@color/colorPrimary">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <ImageButton
-                android:id="@+id/button_switch_contact_style"
+                android:id="@+id/button_back_details"
                 android:layout_width="15dp"
                 android:layout_marginLeft="10dp"
-                android:layout_height="50dp"
+                android:layout_height="30dp"
                 android:layout_weight="1"
-                android:background="@drawable/vector_drawable_list"/>
+                android:background="@drawable/vector_drawable_back"/>
 
             <TextView
                 android:id="@+id/text_group_or_contacts"

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.badtudou.model.*;
@@ -44,7 +45,8 @@ public class DetailsActivity extends AppCompatActivity {
         if (! Intent.ACTION_VIEW.equals(getIntent().getAction())){
             return;
         }
-
+        initViews();
+        // get name and number
         final long id = ContentUris.parseId(getIntent().getData());
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = null;
@@ -55,10 +57,22 @@ public class DetailsActivity extends AppCompatActivity {
         itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
-        itemList.put("email", ContactsContract.CommonDataKinds.Email.DATA);
         Map<String, String> map = new HashMap<>();
         map =  Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
-        Log.d("Test", map.toString());
+
+        // get email
+        uri = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
+        projection = null;
+        selection = ContactsContract.CommonDataKinds.Email.CONTACT_ID + " =? ";
+        itemList.clear();
+        itemList.put("email", ContactsContract.CommonDataKinds.Email.DATA);
+        Map<String, String> mapEmail = new HashMap<>();
+        try {
+            mapEmail = Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
+        }catch (IndexOutOfBoundsException indexExp){
+
+        }
+        map.putAll(mapEmail);
         contacts = new Contacts();
         //contacts = new Contacts(id1, dispalyname,phone, email);
         map2Obj(map, contacts);
@@ -72,6 +86,15 @@ public class DetailsActivity extends AppCompatActivity {
 
         TextView text_phone = (TextView)findViewById(R.id.text_phone);
         TextView text_email = (TextView)findViewById(R.id.text_email);
+        ImageButton button_back = (ImageButton)findViewById(R.id.button_back_details);
+
+        button_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Test", "Click back button");
+                finish();
+            }
+        });
     }
 
     private void map2Obj(Map<String, String> map, Contacts contacts){
