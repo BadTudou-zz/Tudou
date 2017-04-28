@@ -1,6 +1,7 @@
 package com.badtudou.tudou;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -9,11 +10,21 @@ import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.badtudou.model.*;
 import com.badtudou.model.Contacts;
@@ -24,11 +35,14 @@ import java.util.Map;
 public class DetailsActivity extends AppCompatActivity {
 
     private Contacts contacts;
+    private GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
         ActivityDetailsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,6 +60,7 @@ public class DetailsActivity extends AppCompatActivity {
             return;
         }
         initViews();
+
         // get name and number
         final long id = ContentUris.parseId(getIntent().getData());
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
@@ -74,12 +89,8 @@ public class DetailsActivity extends AppCompatActivity {
         }
         map.putAll(mapEmail);
         contacts = new Contacts();
-        //contacts = new Contacts(id1, dispalyname,phone, email);
         map2Obj(map, contacts);
         binding.setContacts(contacts);
-        //Log.d("Test", ));
-        //com.badtudou.model.Contacts user = new User(contacts.get("name"), "User");
-        //binding.setContacts(user);
     }
 
     private void initViews(){
@@ -87,11 +98,11 @@ public class DetailsActivity extends AppCompatActivity {
         TextView text_phone = (TextView)findViewById(R.id.text_phone);
         TextView text_email = (TextView)findViewById(R.id.text_email);
         ImageButton button_back = (ImageButton)findViewById(R.id.button_back_details);
+        setGridView();
 
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Test", "Click back button");
                 finish();
             }
         });
@@ -105,4 +116,32 @@ public class DetailsActivity extends AppCompatActivity {
         contacts.set(id, dispalyname, phone, email);
 
     }
+
+    private void setGridView(){
+        gridView = (GridView) findViewById(R.id.gridView_im);
+        int size = 100;
+        int length = 100;
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        float density = dm.density;
+        int gridviewWidth = (int)(size * (length + 10) * density);
+        int itemWidth = (int)(length * density);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(gridviewWidth, LinearLayoutCompat.LayoutParams.MATCH_PARENT);
+        gridView.setLayoutParams(params);
+        gridView.setColumnWidth(itemWidth);
+        gridView.setHorizontalSpacing(5);
+        gridView.setStretchMode(GridView.NO_STRETCH);
+        gridView.setNumColumns(size);
+
+        gridView.setAdapter(new ImageAdapter(this));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+    }
 }
+
