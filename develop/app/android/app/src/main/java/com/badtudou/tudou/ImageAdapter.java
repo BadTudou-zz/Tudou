@@ -1,6 +1,9 @@
 package com.badtudou.tudou;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +37,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 //        ImageView imageView;
 //        if (convertView == null) {
 //            // if it's not recycled, initialize some attributes
@@ -50,10 +53,20 @@ public class ImageAdapter extends BaseAdapter {
 //        return imageView;
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(R.layout.gridview_item, null);
-        TextView tvCity = (TextView)convertView.findViewById(R.id.tvCity);
+        View view_details = layoutInflater.inflate(R.layout.activity_details, null);
         ImageView imageView = (ImageView)convertView.findViewById(R.id.iiLogo);
 
-        tvCity.setText("TestCity");
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                  TextView textviewName = (TextView) ((Activity)mContext).findViewById((R.id.textview_IM_name));
+                //textviewName.setText(mTexts[position]);
+                Log.d("Test", "Click v"+mTexts[position]);
+                textviewName.setText(mTexts[position]);
+            }
+        });
+
         imageView.setImageResource(mThumbIds[position]);
         return convertView;
     }
@@ -66,5 +79,10 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.vector_drawable_qq, R.drawable.vector_drawable_qq,
             R.drawable.vector_drawable_qq, R.drawable.vector_drawable_qq,
             R.drawable.vector_drawable_qq, R.drawable.vector_drawable_qq
+    };
+
+    // references to our text
+    private String[] mTexts = {
+        "QQ", "微信", "微博", "twitter","QQ", "微信", "微博", "twitter","QQ", "微信", "微博", "twitter"
     };
 }

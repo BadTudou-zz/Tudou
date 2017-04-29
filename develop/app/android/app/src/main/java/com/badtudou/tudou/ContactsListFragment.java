@@ -3,6 +3,8 @@ package com.badtudou.tudou;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -18,9 +20,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +100,28 @@ public class ContactsListFragment extends Fragment {
         contactsList = contacts.getContactsList();
 
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
-                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
+                new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
+        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if(view instanceof ImageView){
+                    String idstring = String.valueOf(data);
+                    Long id = Long.valueOf(idstring);
+                    InputStream inputStream = contacts.openPhoto(Long.valueOf(id));
+                    Bitmap bmp;
+                    if(inputStream != null){
+                        bmp = BitmapFactory.decodeStream(inputStream);
+                    }else{
+                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_earth);
+                    }
+                    ((ImageView) view).setImageBitmap(bmp);
+
+                    Log.d("Test", "show photo"+String.valueOf(data));
+                    return  true;
+                }
+                return false;
+            }
+        });
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -161,6 +186,12 @@ public class ContactsListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("Test", contactsList.get(position).toString());
                 Long personId = Long.parseLong(contactsList.get(position).get("id"));
+                if (contacts.openPhoto(personId) != null){
+                    Log.d("Test", "has photo");
+                }else{
+                    Log.d("Test", "has no photo");
+                }
+
                 Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
                 Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
                 startActivity(intent);
