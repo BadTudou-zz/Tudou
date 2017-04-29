@@ -1,17 +1,27 @@
 package com.badtudou.tudou;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,8 +93,58 @@ public class HistoryFragment extends Fragment {
         listView = (ListView)view.findViewById(R.id.call_list);
         adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
                 new String[]{"number"}, new int[]{R.id.txt_number});
+        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                Integer id = view.getId();
+                Log.d("Test", String.valueOf(id)+String.valueOf(R.id.txt_number));
+                switch (id){
+                    case R.id.txt_number:
+                        String number = String.valueOf(data);
+                        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                        String[] projection = null;
+                        String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
+                        Map<String, String> itemList = new HashMap<>();
+                        String[] selectionArgs = {number};
+                        String sortOrder = null;
+                        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        Map<String, String> map = new HashMap<String, String>();
+                        try {
+                            map = Util.ContentResolverSearch(getActivity().getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
+                            Log.d("Test", map.toString());
+                            ((TextView) view).setText(map.get("name"));
+                            return true;
+                        } catch (IndexOutOfBoundsException arExc){
+                        }
+                        break;
+                }
+//                if(view.getId()){
+//                    String idstring = String.valueOf(data);
+//                    Long id = Long.valueOf(idstring);
+////                    InputStream inputStream = contacts.openPhoto(Long.valueOf(id));
+////                    Bitmap bmp;
+////                    if(inputStream != null){
+////                        bmp = BitmapFactory.decodeStream(inputStream);
+////                    }else{
+////                        // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
+////                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
+////                    }
+////                    ((ImageView) view).setImageBitmap(bmp);
+//
+//
+//                    Log.d("Test", "show photo"+String.valueOf(data));
+//                    return  true;
+//              }
+                return false;
+            }
+        });
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return  view;
     }
 

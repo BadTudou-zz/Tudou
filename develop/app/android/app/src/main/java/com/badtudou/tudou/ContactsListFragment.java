@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -102,6 +105,7 @@ public class ContactsListFragment extends Fragment {
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
                 new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
                 if(view instanceof ImageView){
@@ -112,9 +116,11 @@ public class ContactsListFragment extends Fragment {
                     if(inputStream != null){
                         bmp = BitmapFactory.decodeStream(inputStream);
                     }else{
-                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_earth);
+                       // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
+                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
                     }
                     ((ImageView) view).setImageBitmap(bmp);
+
 
                     Log.d("Test", "show photo"+String.valueOf(data));
                     return  true;
