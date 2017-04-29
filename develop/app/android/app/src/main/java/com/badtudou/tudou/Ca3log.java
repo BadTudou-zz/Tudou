@@ -3,20 +3,11 @@ package com.badtudou.tudou;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
-import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +28,19 @@ public class Ca3log {
         Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);
     }
 
+    static final public Map<Integer, Integer> type2Resources = new HashMap<Integer , Integer>(){{
+        put(CallLog.Calls.INCOMING_TYPE, R.drawable.incoming_type);
+        put(CallLog.Calls.OUTGOING_TYPE, R.drawable.outgoing_type);
+
+        // TODO
+        put(CallLog.Calls.MISSED_TYPE, R.drawable.outgoing_type);
+        put(CallLog.Calls.VOICEMAIL_TYPE, R.drawable.outgoing_type);
+        put(CallLog.Calls.REJECTED_TYPE, R.drawable.outgoing_type);
+        put(CallLog.Calls.BLOCKED_TYPE, R.drawable.outgoing_type);
+        put(CallLog.Calls.ANSWERED_EXTERNALLY_TYPE, R.drawable.outgoing_type);
+
+    }};
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Map<String, String>> getCallsList(){
         Uri uri = CallLog.Calls.CONTENT_URI;
@@ -46,9 +50,9 @@ public class Ca3log {
         String[] selectionArgs = null;
         String sortOrder = null;
         itemList.put("number", CallLog.Calls.NUMBER);
-        itemList.put("name", CallLog.Calls.CACHED_NAME);
         itemList.put("duration", CallLog.Calls.DURATION);
         itemList.put("date", CallLog.Calls.DATE);
+        itemList.put("type", CallLog.Calls.TYPE);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
 
     }

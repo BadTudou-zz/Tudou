@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -92,13 +96,12 @@ public class HistoryFragment extends Fragment {
         ca3list = ca3log.getCallsList();
         listView = (ListView)view.findViewById(R.id.call_list);
         adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
-                new String[]{"number"}, new int[]{R.id.txt_number});
+                new String[]{"number", "date", "type"}, new int[]{R.id.txt_number, R.id.txt_date, R.id.img_type});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
                 Integer id = view.getId();
-                Log.d("Test", String.valueOf(id)+String.valueOf(R.id.txt_number));
                 switch (id){
                     case R.id.txt_number:
                         String number = String.valueOf(data);
@@ -119,24 +122,25 @@ public class HistoryFragment extends Fragment {
                         } catch (IndexOutOfBoundsException arExc){
                         }
                         break;
+
+                    case R.id.txt_date:
+                        String timeString = String.valueOf(data);
+                        Long timestamp = Long.valueOf(timeString);
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String date = formatter.format(timestamp);
+                        ((TextView) view).setText(date);
+                        return true;
+
+
+                    case R.id.img_type:
+                        Log.d("Test", "显示图片");
+                        String typeString = String.valueOf(data);
+                        Integer type = Integer.valueOf(typeString);
+                        Log.d("Test", "type:"+typeString);
+                        ((ImageView) view).setBackgroundResource(Ca3log.type2Resources.get(type));
+                        return true;
                 }
-//                if(view.getId()){
-//                    String idstring = String.valueOf(data);
-//                    Long id = Long.valueOf(idstring);
-////                    InputStream inputStream = contacts.openPhoto(Long.valueOf(id));
-////                    Bitmap bmp;
-////                    if(inputStream != null){
-////                        bmp = BitmapFactory.decodeStream(inputStream);
-////                    }else{
-////                        // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
-////                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
-////                    }
-////                    ((ImageView) view).setImageBitmap(bmp);
-//
-//
-//                    Log.d("Test", "show photo"+String.valueOf(data));
-//                    return  true;
-//              }
+
                 return false;
             }
         });
