@@ -15,14 +15,14 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <ImageButton
-                android:id="@+id/button_switch_contact_style"
+                android:id="@+id/button_switch_history_style"
                 android:layout_width="15dp"
                 android:layout_marginLeft="10dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:background="@drawable/vector_drawable_list"/>
             <TextView
-                android:id="@+id/text_group_or_contacts"
+                android:id="@+id/text_group_or_history"
                 android:layout_weight="12"
                 android:textAlignment="center"
                 android:layout_width="wrap_content"

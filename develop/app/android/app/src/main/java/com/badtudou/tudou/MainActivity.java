@@ -9,16 +9,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity implements
-        HistoryFragment.OnFragmentInteractionListener,
+        HistoryListFragment.OnFragmentInteractionListener,
         ContactsListFragment.OnFragmentInteractionListener,
         ContactsGroupFragment.OnFragmentInteractionListener,
         CallFragment.OnFragmentInteractionListener,
@@ -27,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
-    private HistoryFragment historyFragment;
+    private HistoryListFragment historyListFragment;
+    private HistoryGroupFragment historyGroupFragment;
     private ContactsListFragment contactsListFragment;
     private ContactsGroupFragment contactsGroupFragment;
     private CallFragment callFragment;
@@ -42,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements
             transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_history:
-                    if (historyFragment == null) {
+                    if (historyListFragment == null) {
                         initFragments();
                     }
                     hideFragments();
-                    showFrame(historyFragment);
+                    showFrame(historyListFragment);
                     setNavigationBar("history");
                     return true;
 
@@ -93,12 +92,14 @@ public class MainActivity extends AppCompatActivity implements
         // get fragmentManager
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
-        historyFragment = new HistoryFragment();
+        historyListFragment = new HistoryListFragment();
+        historyGroupFragment = new HistoryGroupFragment();
         contactsListFragment = new ContactsListFragment();
         contactsGroupFragment = new ContactsGroupFragment();
         callFragment = new CallFragment();
         Bundle args=new Bundle();
-        transaction.add(R.id.content, historyFragment);
+        transaction.add(R.id.content, historyListFragment);
+        transaction.add(R.id.content, historyGroupFragment);
         transaction.add(R.id.content, contactsListFragment);
         transaction.add(R.id.content, contactsGroupFragment);
         transaction.add(R.id.content, callFragment);
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements
     private void hideFragments(){
         transaction.hide(contactsListFragment);
         transaction.hide(contactsGroupFragment);
-        transaction.hide(historyFragment);
+        transaction.hide(historyListFragment);
+        transaction.hide(historyGroupFragment);
         transaction.hide(callFragment);
     }
 
@@ -185,6 +187,25 @@ public class MainActivity extends AppCompatActivity implements
                         initFragments();
                     }
                     showFrame(contactsListFragment);
+                }
+                break;
+
+            case R.id.button_switch_history_style:
+                Log.d("Test", "切换历史的风格");
+                hideFragments();
+                if (historyListFragment.isVisible()){
+                    Log.d("Test", "切换到群组");
+                    if (historyGroupFragment == null){
+                        initFragments();
+                    }
+                    showFrame(historyGroupFragment);
+                }
+                else{
+                    Log.d("Test", "切换到列表");
+                    if (historyListFragment == null){
+                        initFragments();
+                    }
+                    showFrame(historyListFragment);
                 }
                 break;
         }

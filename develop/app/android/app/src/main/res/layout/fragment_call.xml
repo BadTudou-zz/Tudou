@@ -53,7 +53,7 @@
         android:layout_below="@id/Row0"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="270dp">
+        android:layout_height="240dp">
         <ListView
             android:id="@+id/contents_match_list"
             android:layout_width="match_parent"

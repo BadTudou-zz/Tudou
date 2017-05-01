@@ -1,8 +1,6 @@
 package com.badtudou.tudou;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,34 +9,34 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HistoryFragment.OnFragmentInteractionListener} interface
+ * {@link HistoryListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HistoryFragment#newInstance} factory method to
+ * Use the {@link HistoryListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,8 +52,9 @@ public class HistoryFragment extends Fragment {
     private ListView listView;
 
     private OnFragmentInteractionListener mListener;
+    private ButtonClickListener buttonClickListener;
 
-    public HistoryFragment() {
+    public HistoryListFragment() {
         // Required empty public constructor
     }
 
@@ -65,11 +64,11 @@ public class HistoryFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoryFragment.
+     * @return A new instance of fragment HistoryListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HistoryFragment newInstance(String param1, String param2) {
-        HistoryFragment fragment = new HistoryFragment();
+    public static HistoryListFragment newInstance(String param1, String param2) {
+        HistoryListFragment fragment = new HistoryListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -91,9 +90,11 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_history, container, false);
+        view =  inflater.inflate(R.layout.fragment_history_list, container, false);
+        initViews();
         ca3log = new Ca3log(getActivity());
         ca3list = ca3log.getCallsList();
+        Log.d("Test", ca3list.toString());
         listView = (ListView)view.findViewById(R.id.call_list);
         adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
                 new String[]{"number", "date", "type"}, new int[]{R.id.txt_number, R.id.txt_date, R.id.img_type});
@@ -168,6 +169,11 @@ public class HistoryFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if (context instanceof  ButtonClickListener){
+            Log.d("Test", "实现接口");
+            buttonClickListener = (ButtonClickListener) context;
+
+        }
     }
 
     @Override
@@ -190,4 +196,24 @@ public class HistoryFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void initViews() {
+        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
+        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style);
+
+        button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_add_contact);
+            }
+        });
+
+        button_switch_history_style.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_switch_history_style);
+            }
+        });
+    }
+
 }
