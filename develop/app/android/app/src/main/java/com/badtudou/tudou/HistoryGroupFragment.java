@@ -1,8 +1,10 @@
 package com.badtudou.tudou;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,12 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,16 +31,32 @@ import java.util.Map;
  */
 
 public class HistoryGroupFragment extends Fragment {
-    private List< List<Map<String, String>> > ca3listGroup;
+    private Ca3log ca3log;
+    private List<Map<String, String>> ca3list;
+    private List<Map<String, String>> group;
+    private Map<String, List<Map<String, String>> > ca3listGroup;
+    private SimpleAdapter adapter;
     private View view;
+    private ListView listView;
     private HistoryListFragment.OnFragmentInteractionListener mListener;
     private ButtonClickListener buttonClickListener;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_history_group, container, false);
+        listView = (ListView)view.findViewById(R.id.call_list);
+        ca3log = new Ca3log(getActivity());
+        ca3list = new ArrayList<>();
+        group = new ArrayList<>();
+        ca3listGroup = new HashMap<>();
+        adapter = new SimpleAdapter(view.getContext(), group, R.layout.history_group_item,
+                new String[]{"date", "count"}, new int[]{R.id.txt_date, R.id.txt_count});
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         initViews();
+        sordCa3istByDate();
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return view;
@@ -78,8 +99,9 @@ public class HistoryGroupFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void sordCa3istByDate(){
-        List<Map<String, String>> ca3list = new ArrayList<>();
+        List<Map<String, String>> ca3list = ca3log.getCallsList();
         Iterator<Map<String, String>> iter = ca3list.iterator();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -104,13 +126,42 @@ public class HistoryGroupFragment extends Fragment {
         calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - 15);
         longtimeBefore = calendar.getTime();
 
-
         SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+
+        String todayString =  dateFormat.format(today);//今天
+        String yesterdayString = dateFormat.format(yesterday); //昨天
+        String twoDaysBeforeString = dateFormat.format(twoDaysBefore); //前天
+        String aWeekBeforeString = dateFormat.format(aWeekBefore); //一周前
+        String longtimeBeforeString  = dateFormat.format(longtimeBefore); //更久前
+        Map<String, String> mapGroup = new HashMap<>();
         Log.d("Test", dateFormat.format(yesterday));
-        while(iter.hasNext())
-        {
-            iter.next();
-            //System.out.println(iter.next());
+        for(Map<String, String>  map : ca3list)    {
+            String timeString = map.get("date");
+            Long timestamp = Long.valueOf(timeString);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String date = formatter.format(timestamp);
+            Log.d("Test", date);
+
+            if (ca3listGroup.get(date) == null){
+                ca3listGroup.put(date, new ArrayList<Map<String, String>>());
+                ca3listGroup.get(date).add(map);
+
+                mapGroup.put(date, String.valueOf(1));
+            }else{
+                ca3listGroup.get(date).add(map);
+                Long count = Long.valueOf(mapGroup.get(date))+1;
+                mapGroup.put(date, String.valueOf(count));
+            }
         }
+
+        for(String key: ca3listGroup.keySet()){
+            String count = String.valueOf(ca3listGroup.get(key).size());
+            Map<String, String> map = new HashMap<>();
+            map.put("date", key);
+            map.put("count", count);
+            group.add(map);
+        }
+        Log.d("Test", ca3listGroup.toString());
+        Log.d("Test", mapGroup.toString());
     }
 }
