@@ -11,8 +11,8 @@
             layout="@layout/app_bar_history"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <ListView
-            android:id="@+id/call_list"
+        <ExpandableListView
+            android:id="@+id/history_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

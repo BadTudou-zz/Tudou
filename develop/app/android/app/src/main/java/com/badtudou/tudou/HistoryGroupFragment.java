@@ -12,9 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -35,9 +38,10 @@ public class HistoryGroupFragment extends Fragment {
     private List<Map<String, String>> ca3list;
     private List<Map<String, String>> group;
     private Map<String, List<Map<String, String>> > ca3listGroup;
-    private SimpleAdapter adapter;
+    private List<List<Map<String, String>>> groupList;
+    private ExpandableListAdapter adapter;
     private View view;
-    private ListView listView;
+    private ExpandableListView listView;
     private HistoryListFragment.OnFragmentInteractionListener mListener;
     private ButtonClickListener buttonClickListener;
 
@@ -46,17 +50,27 @@ public class HistoryGroupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_history_group, container, false);
-        listView = (ListView)view.findViewById(R.id.call_list);
+        listView = (ExpandableListView)view.findViewById(R.id.history_group);
         ca3log = new Ca3log(getActivity());
         ca3list = new ArrayList<>();
+        groupList = new ArrayList<>();
         group = new ArrayList<>();
         ca3listGroup = new HashMap<>();
-        adapter = new SimpleAdapter(view.getContext(), group, R.layout.history_group_item,
-                new String[]{"date", "count"}, new int[]{R.id.txt_date, R.id.txt_count});
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        initViews();
         sordCa3istByDate();
+        Log.d("Test", groupList.toString());
+        adapter = new SimpleExpandableListAdapter(view.getContext(),
+                group,
+                R.layout.history_group_item,
+                new String[]{"date", "count"}, new int[]{R.id.txt_date, R.id.txt_count},
+                groupList,
+                R.layout.history_list_item,
+                new String[]{"number", "date"},
+                new int[]{R.id.txt_number, R.id.txt_date});
+        listView.setAdapter(adapter);
+       // adapter.
+        //adapter.
+        //adapter.notifyDataSetChanged();
+        initViews();
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return view;
@@ -160,8 +174,10 @@ public class HistoryGroupFragment extends Fragment {
             map.put("date", key);
             map.put("count", count);
             group.add(map);
+            groupList.add(ca3listGroup.get(key));
         }
         Log.d("Test", ca3listGroup.toString());
         Log.d("Test", mapGroup.toString());
     }
+
 }
