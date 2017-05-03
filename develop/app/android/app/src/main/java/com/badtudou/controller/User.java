@@ -1,16 +1,11 @@
-package com.badtudou.tudou;
+package com.badtudou.controller;
 
-import android.app.Application;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.badtudou.util.Rest;
+import com.badtudou.model.ResultCallBack;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +20,7 @@ public class User {
     public static final String USER_EMAIL = "email";
     public static final String USER_PHONE = "phone";
     public static final String USER_PASSWORD = "password";
-    private  Rest rest = null;
+    private Rest rest = null;
     private ResultCallBack callBack;
 
     public User(ResultCallBack callBack){

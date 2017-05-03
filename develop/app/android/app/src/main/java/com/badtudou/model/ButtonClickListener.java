@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.model;
 
 /**
  * Created by badtudou on 21/04/2017.

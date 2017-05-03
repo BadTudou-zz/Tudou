@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.view.fragment;
 
 import android.content.Context;
 import android.os.Build;
@@ -15,10 +15,11 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleExpandableListAdapter;
-import android.widget.TextView;
+
+import com.badtudou.model.ButtonClickListener;
+import com.badtudou.controller.Ca3log;
+import com.badtudou.tudou.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.view.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,11 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+
+import com.badtudou.controller.Call;
+import com.badtudou.controller.Contacts;
+import com.badtudou.tudou.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

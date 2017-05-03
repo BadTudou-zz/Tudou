@@ -1,7 +1,6 @@
-package com.badtudou.tudou;
+package com.badtudou.view.activity;
 
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -13,21 +12,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.badtudou.model.*;
 import com.badtudou.model.Contacts;
+import com.badtudou.model.ImageAdapter;
+import com.badtudou.tudou.R;
+import com.badtudou.util.Util;
 import com.badtudou.tudou.databinding.ActivityDetailsBinding;
 
 import java.util.HashMap;

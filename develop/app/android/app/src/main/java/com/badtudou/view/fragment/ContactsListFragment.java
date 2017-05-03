@@ -1,6 +1,10 @@
-package com.badtudou.tudou;
+package com.badtudou.view.fragment;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,17 +17,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import com.badtudou.controller.Contacts;
+import com.badtudou.model.ButtonClickListener;
+import com.badtudou.tudou.R;
+
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +35,12 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HistoryListFragment.OnFragmentInteractionListener} interface
+ * {@link ContactsListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HistoryListFragment#newInstance} factory method to
+ * Use the {@link ContactsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryListFragment extends Fragment {
+public class ContactsListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -45,16 +49,17 @@ public class HistoryListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private View view;
-    private Ca3log ca3log;
-    private List<Map<String, String>> ca3list;
+
+    private Contacts contacts;
+    private List<Map<String,String>> contactsList;
     private SimpleAdapter adapter;
+    private View view;
     private ListView listView;
 
     private OnFragmentInteractionListener mListener;
     private ButtonClickListener buttonClickListener;
 
-    public HistoryListFragment() {
+    public ContactsListFragment() {
         // Required empty public constructor
     }
 
@@ -64,11 +69,11 @@ public class HistoryListFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoryListFragment.
+     * @return A new instance of fragment ContactsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HistoryListFragment newInstance(String param1, String param2) {
-        HistoryListFragment fragment = new HistoryListFragment();
+    public static ContactsListFragment newInstance(String param1, String param2) {
+        ContactsListFragment fragment = new ContactsListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -79,69 +84,47 @@ public class HistoryListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_history_list, container, false);
-        initViews();
-        ca3log = new Ca3log(getActivity());
-        ca3list = ca3log.getCallsList();
-        Log.d("Test", ca3list.toString());
-        listView = (ListView)view.findViewById(R.id.call_list);
-        adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
-                new String[]{"number", "date", "type"}, new int[]{R.id.txt_number, R.id.txt_date, R.id.img_type});
+        view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
+        listView = (ListView)view.findViewById(R.id.contents_list);
+        //test
+        contacts = new Contacts(getActivity());
+        contactsList = contacts.getContactsList();
+
+        adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
+                new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
-                Integer id = view.getId();
-                switch (id){
-                    case R.id.txt_number:
-                        String number = String.valueOf(data);
-                        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-                        String[] projection = null;
-                        String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-                        Map<String, String> itemList = new HashMap<>();
-                        String[] selectionArgs = {number};
-                        String sortOrder = null;
-                        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
-                        Map<String, String> map = new HashMap<String, String>();
-                        try {
-                            map = Util.ContentResolverSearch(getActivity().getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
-                            Log.d("Test", map.toString());
-                            ((TextView) view).setText(map.get("name"));
-                            return true;
-                        } catch (IndexOutOfBoundsException arExc){
-                        }
-                        break;
-
-                    case R.id.txt_date:
-                        String timeString = String.valueOf(data);
-                        Long timestamp = Long.valueOf(timeString);
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String date = formatter.format(timestamp);
-                        ((TextView) view).setText(date);
-                        return true;
+                if(view instanceof ImageView){
+                    String idstring = String.valueOf(data);
+                    Long id = Long.valueOf(idstring);
+                    InputStream inputStream = contacts.openPhoto(Long.valueOf(id));
+                    Bitmap bmp;
+                    if(inputStream != null){
+                        bmp = BitmapFactory.decodeStream(inputStream);
+                    }else{
+                       // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
+                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
+                    }
+                    ((ImageView) view).setImageBitmap(bmp);
 
 
-                    case R.id.img_type:
-                        Log.d("Test", "显示图片");
-                        String typeString = String.valueOf(data);
-                        Integer type = Integer.valueOf(typeString);
-                        Log.d("Test", "type:"+typeString);
-                        ((ImageView) view).setBackgroundResource(Ca3log.type2Resources.get(type));
-                        return true;
+                    Log.d("Test", "show photo"+String.valueOf(data));
+                    return  true;
                 }
-
                 return false;
             }
         });
@@ -150,7 +133,10 @@ public class HistoryListFragment extends Fragment {
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        return  view;
+        initViews();
+        return view;
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -174,12 +160,50 @@ public class HistoryListFragment extends Fragment {
             buttonClickListener = (ButtonClickListener) context;
 
         }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void initViews(){
+        ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
+
+        button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_add_contact);
+            }
+        });
+
+        button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClickListener.showMessage(R.id.button_switch_contact_style);
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Test", contactsList.get(position).toString());
+                Long personId = Long.parseLong(contactsList.get(position).get("id"));
+                if (contacts.openPhoto(personId) != null){
+                    Log.d("Test", "has photo");
+                }else{
+                    Log.d("Test", "has no photo");
+                }
+
+                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
+                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**
@@ -195,25 +219,6 @@ public class HistoryListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void initViews() {
-        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style);
-
-        button_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_add_contact);
-            }
-        });
-
-        button_switch_history_style.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_switch_history_style);
-            }
-        });
     }
 
 }

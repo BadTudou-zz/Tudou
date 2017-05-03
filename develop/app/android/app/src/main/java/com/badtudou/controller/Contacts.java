@@ -1,27 +1,18 @@
-package com.badtudou.tudou;
+package com.badtudou.controller;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.provider.ContactsContract.Groups;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
-import android.widget.ListView;
+
+import com.badtudou.util.Util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +27,7 @@ public class Contacts {
     private ContentResolver contentResolver = null;
     private Cursor cursor = null;
     private Activity activity;
-    Contacts(Activity activity) {
+    public Contacts(Activity activity) {
         this.activity = activity;
         contentResolver =  activity.getContentResolver();
         Util.PermissionRequire(activity, Manifest.permission.READ_CONTACTS);

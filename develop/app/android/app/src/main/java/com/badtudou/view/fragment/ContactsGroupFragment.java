@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.view.fragment;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,11 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.badtudou.model.ButtonClickListener;
+import com.badtudou.controller.Contacts;
+import com.badtudou.tudou.R;
 
 import java.util.List;
 import java.util.Map;

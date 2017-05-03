@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.view.activity;
 
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
@@ -14,6 +14,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.badtudou.model.ButtonClickListener;
+import com.badtudou.controller.Call;
+import com.badtudou.view.fragment.CallFragment;
+import com.badtudou.view.fragment.ContactsGroupFragment;
+import com.badtudou.view.fragment.ContactsListFragment;
+import com.badtudou.view.fragment.HistoryGroupFragment;
+import com.badtudou.view.fragment.HistoryListFragment;
+import com.badtudou.tudou.R;
+
 
 public class MainActivity extends AppCompatActivity implements
         HistoryListFragment.OnFragmentInteractionListener,
@@ -21,8 +30,7 @@ public class MainActivity extends AppCompatActivity implements
         ContactsGroupFragment.OnFragmentInteractionListener,
         CallFragment.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
-        ButtonClickListener{
-
+        ButtonClickListener {
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
     private HistoryListFragment historyListFragment;

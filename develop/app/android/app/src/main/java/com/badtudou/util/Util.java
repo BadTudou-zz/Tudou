@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.util;
 
 import android.Manifest;
 import android.app.Activity;

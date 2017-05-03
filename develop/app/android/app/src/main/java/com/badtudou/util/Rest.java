@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.util;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,7 +39,7 @@ public class Rest extends Thread {
     private String parametersString, method;
     private int time_out;
 
-    Rest(Handler handler){
+    public Rest(Handler handler){
         this.handler = handler;
         this.message = new Message();
     }

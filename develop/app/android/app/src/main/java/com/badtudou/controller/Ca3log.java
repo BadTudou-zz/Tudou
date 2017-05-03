@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.controller;
 
 import android.Manifest;
 import android.app.Activity;
@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
 import android.support.annotation.RequiresApi;
+
+import com.badtudou.tudou.R;
+import com.badtudou.util.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +25,7 @@ public class Ca3log {
     private ContentResolver contentResolver = null;
     private Activity activity;
 
-    Ca3log(Activity activity) {
+    public Ca3log(Activity activity) {
         this.activity = activity;
         contentResolver = activity.getContentResolver();
         Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);

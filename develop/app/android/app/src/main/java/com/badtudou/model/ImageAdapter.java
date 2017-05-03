@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.model;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.badtudou.tudou.R;
 
 /**
  * Created by badtudou on 27/04/2017.

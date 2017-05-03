@@ -1,4 +1,4 @@
-package com.badtudou.tudou;
+package com.badtudou.controller;
 
 import android.Manifest;
 import android.app.Activity;
@@ -6,9 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
-import java.util.ArrayList;
+import com.badtudou.util.Util;
 
 /**
  * Created by badtudou on 16/04/2017.
@@ -18,7 +17,7 @@ public class Call {
 
     private Activity activity;
 
-    Call(Activity activity) {
+    public Call(Activity activity) {
         this.activity = activity;
         Util.PermissionRequire(activity, Manifest.permission.CALL_PHONE);
     }
