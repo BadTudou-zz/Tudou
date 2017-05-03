@@ -24,7 +24,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.badtudou.controller.Contacts;
-import com.badtudou.model.ButtonClickListener;
+import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
 
 import java.io.InputStream;
@@ -57,7 +57,7 @@ public class ContactsListFragment extends Fragment {
     private ListView listView;
 
     private OnFragmentInteractionListener mListener;
-    private ButtonClickListener buttonClickListener;
+    private FragmentViewClickListener fragmentViewClickListener;
 
     public ContactsListFragment() {
         // Required empty public constructor
@@ -155,9 +155,9 @@ public class ContactsListFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        if (context instanceof  ButtonClickListener){
+        if (context instanceof FragmentViewClickListener){
             Log.d("Test", "实现接口");
-            buttonClickListener = (ButtonClickListener) context;
+            fragmentViewClickListener = (FragmentViewClickListener) context;
 
         }
 
@@ -173,19 +173,8 @@ public class ContactsListFragment extends Fragment {
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
         ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
 
-        button_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_add_contact);
-            }
-        });
-
-        button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_switch_contact_style);
-            }
-        });
+        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

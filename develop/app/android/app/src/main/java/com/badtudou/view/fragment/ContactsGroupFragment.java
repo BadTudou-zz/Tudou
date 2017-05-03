@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.badtudou.model.ButtonClickListener;
+import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.controller.Contacts;
 import com.badtudou.tudou.R;
 
@@ -47,8 +47,7 @@ public class ContactsGroupFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-    private ButtonClickListener buttonClickListener;
+    //private OnFragmentInteractionListener mListener;
 
     public ContactsGroupFragment() {
         // Required empty public constructor
@@ -72,14 +71,14 @@ public class ContactsGroupFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,53 +103,42 @@ public class ContactsGroupFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//
+//        if (context instanceof FragmentViewClickListener){
+//            Log.d("Test", "实现接口");
+//            //fragmentViewClickListener = (FragmentViewClickListener) context;
+//
+//        }
+//    }
 
-        if (context instanceof  ButtonClickListener){
-            Log.d("Test", "实现接口");
-            buttonClickListener = (ButtonClickListener) context;
-
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
         ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
         TextView textView_title = (TextView)view.findViewById(R.id.text_group_or_contacts);
 
-        button_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_add_contact);
-            }
-        });
-
-        button_switch_contact_style.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_switch_contact_style);
-            }
-        });
+        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         textView_title.setText(R.string.title_group);
     }

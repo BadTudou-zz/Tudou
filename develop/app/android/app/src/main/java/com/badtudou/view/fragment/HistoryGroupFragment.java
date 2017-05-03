@@ -17,7 +17,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 
-import com.badtudou.model.ButtonClickListener;
+import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.controller.Ca3log;
 import com.badtudou.tudou.R;
 
@@ -44,7 +44,7 @@ public class HistoryGroupFragment extends Fragment {
     private View view;
     private ExpandableListView listView;
     private HistoryListFragment.OnFragmentInteractionListener mListener;
-    private ButtonClickListener buttonClickListener;
+    private FragmentViewClickListener fragmentViewClickListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -87,9 +87,9 @@ public class HistoryGroupFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
 
-        if (context instanceof  ButtonClickListener){
+        if (context instanceof FragmentViewClickListener){
             Log.d("Test", "实现接口");
-            buttonClickListener = (ButtonClickListener) context;
+            fragmentViewClickListener = (FragmentViewClickListener) context;
 
         }
     }
@@ -98,19 +98,8 @@ public class HistoryGroupFragment extends Fragment {
         ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
         ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style);
 
-        button_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_add_contact);
-            }
-        });
-
-        button_switch_history_style.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonClickListener.showMessage(R.id.button_switch_history_style);
-            }
-        });
+        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
     }
 
