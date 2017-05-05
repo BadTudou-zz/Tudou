@@ -18,7 +18,7 @@ import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 
 import com.badtudou.model.FragmentViewClickListener;
-import com.badtudou.controller.Ca3log;
+import com.badtudou.controller.Ca3logController;
 import com.badtudou.tudou.R;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 
 public class HistoryGroupFragment extends Fragment {
-    private Ca3log ca3log;
+    private Ca3logController ca3LogController;
     private List<Map<String, String>> ca3list;
     private List<Map<String, String>> group;
     private Map<String, List<Map<String, String>> > ca3listGroup;
@@ -52,7 +52,7 @@ public class HistoryGroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_history_group, container, false);
         listView = (ExpandableListView)view.findViewById(R.id.history_group);
-        ca3log = new Ca3log(getActivity());
+        ca3LogController = new Ca3logController(getActivity());
         ca3list = new ArrayList<>();
         groupList = new ArrayList<>();
         group = new ArrayList<>();
@@ -105,7 +105,7 @@ public class HistoryGroupFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void sordCa3istByDate(){
-        List<Map<String, String>> ca3list = ca3log.getCallsList();
+        List<Map<String, String>> ca3list = ca3LogController.getCallsList();
         Iterator<Map<String, String>> iter = ca3list.iterator();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

@@ -1,7 +1,6 @@
 package com.badtudou.view.fragment;
 
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.badtudou.controller.Contacts;
+import com.badtudou.controller.ContactsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
 
@@ -50,13 +49,12 @@ public class ContactsListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private Contacts contacts;
+    private ContactsController contactsController;
     private List<Map<String,String>> contactsList;
     private SimpleAdapter adapter;
     private View view;
     private ListView listView;
 
-    private OnFragmentInteractionListener mListener;
     private FragmentViewClickListener fragmentViewClickListener;
 
     public ContactsListFragment() {
@@ -81,26 +79,50 @@ public class ContactsListFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        initDates();
+        initViews();
+        return view;
+
+
+    }
+
+
+    private void initViews(){
+        ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
+
+        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
+
         listView = (ListView)view.findViewById(R.id.contents_list);
-        //test
-        contacts = new Contacts(getActivity());
-        contactsList = contacts.getContactsList();
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Test", contactsList.get(position).toString());
+                Long personId = Long.parseLong(contactsList.get(position).get("id"));
+
+                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
+                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    private void initDates(){
+        contactsController = new ContactsController(getActivity());
+        contactsList = contactsController.getContactsList();
 
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
                 new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
@@ -111,12 +133,12 @@ public class ContactsListFragment extends Fragment {
                 if(view instanceof ImageView){
                     String idstring = String.valueOf(data);
                     Long id = Long.valueOf(idstring);
-                    InputStream inputStream = contacts.openPhoto(Long.valueOf(id));
+                    InputStream inputStream = contactsController.openPhoto(Long.valueOf(id));
                     Bitmap bmp;
                     if(inputStream != null){
                         bmp = BitmapFactory.decodeStream(inputStream);
                     }else{
-                       // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
+                        // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
                         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
                     }
                     ((ImageView) view).setImageBitmap(bmp);
@@ -128,71 +150,6 @@ public class ContactsListFragment extends Fragment {
                 return false;
             }
         });
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        initViews();
-        return view;
-
-
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-        if (context instanceof FragmentViewClickListener){
-            Log.d("Test", "实现接口");
-            fragmentViewClickListener = (FragmentViewClickListener) context;
-
-        }
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    private void initViews(){
-        ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
-
-        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
-        button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Test", contactsList.get(position).toString());
-                Long personId = Long.parseLong(contactsList.get(position).get("id"));
-                if (contacts.openPhoto(personId) != null){
-                    Log.d("Test", "has photo");
-                }else{
-                    Log.d("Test", "has no photo");
-                }
-
-                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
-                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
-                startActivity(intent);
-            }
-        });
-
     }
 
     /**

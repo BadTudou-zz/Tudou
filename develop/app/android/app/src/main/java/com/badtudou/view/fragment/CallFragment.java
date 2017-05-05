@@ -1,7 +1,6 @@
 package com.badtudou.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,8 +16,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.badtudou.controller.Call;
-import com.badtudou.controller.Contacts;
+import com.badtudou.controller.CallController;
+import com.badtudou.controller.ContactsController;
 import com.badtudou.tudou.R;
 
 import java.util.ArrayList;
@@ -49,8 +48,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
     private Map<String, Integer> strMapInt;
     private EditText editTextPhone;
     private ImageButton buttonBackSpace;
-    private OnFragmentInteractionListener mListener;
-    private Contacts contacts;
+    private ContactsController contactsController;
     private SimpleAdapter adapter;
     private ListView listView;
     private List<Map<String,String>> contactsMatchList;
@@ -91,47 +89,10 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_call, container, false);
+        initDates();
         initViews();
-        contacts = new Contacts(getActivity());
-        listView = (ListView)view.findViewById(R.id.contents_match_list);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, String> contact = contactsMatchList.get(position);
-                editTextPhone.setText(contact.get(Contacts.NUMBER));
-            }
-        });
-        contactsMatchList = new ArrayList<>();
-        contactsMatchList = contacts.getContactsByName("John");
-        adapter = new SimpleAdapter(view.getContext(), contactsMatchList , R.layout.contacts_list_item,
-                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        //contactsMatchList = contactsController.getContactsByName("John");
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -157,7 +118,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                 // call
                 case "l":
                     Log.d("Test", "call button");
-                    new Call((Activity)view.getContext()).callPhone(editTextPhone.getText().toString());
+                    new CallController((Activity)view.getContext()).callPhone(editTextPhone.getText().toString());
                     break;
                 // delete
                 case "e":
@@ -168,11 +129,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                     }
                     break;
             }
-            // Call, Delete
-            Log.d("Test", "has not"+ key);
         }
-        //if(strMapInt.)
-        //switch (v.)
     }
 
     private void initViews(){
@@ -202,21 +159,15 @@ public class CallFragment extends Fragment implements View.OnClickListener {
         // set edittext value change listener
         editTextPhone.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("Test", "input number change"+editTextPhone.getText().toString());
                 contactsMatchList.clear();
-                contactsMatchList.addAll(contacts.getContactsByName(editTextPhone.getText().toString()));
-                contactsMatchList.addAll(contacts.getContactsByNumber(s.toString()));
+                contactsMatchList.addAll(contactsController.getContactsByName(editTextPhone.getText().toString()));
+                contactsMatchList.addAll(contactsController.getContactsByNumber(s.toString()));
                 adapter.notifyDataSetChanged();
             }
         });
@@ -229,6 +180,24 @@ public class CallFragment extends Fragment implements View.OnClickListener {
                 return false;
             }
         });
+
+        listView = (ListView)view.findViewById(R.id.contents_match_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map<String, String> contact = contactsMatchList.get(position);
+                editTextPhone.setText(contact.get("number"));
+            }
+        });
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void initDates(){
+        contactsController = new ContactsController(getActivity());
+        contactsMatchList = new ArrayList<>();
+        adapter = new SimpleAdapter(view.getContext(), contactsMatchList , R.layout.contacts_list_item,
+                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
     }
 
     /**

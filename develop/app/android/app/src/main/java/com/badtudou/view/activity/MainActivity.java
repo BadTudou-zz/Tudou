@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.badtudou.model.FragmentViewClickListener;
-import com.badtudou.controller.Call;
 import com.badtudou.view.fragment.CallFragment;
 import com.badtudou.view.fragment.ContactsGroupFragment;
 import com.badtudou.view.fragment.ContactsListFragment;
@@ -41,12 +40,6 @@ public class MainActivity extends AppCompatActivity implements
     private FragmentManager fragmentManager;
     private List<Fragment> fragmentList;
     private Map<Integer,List<Fragment>> navItem2framnetGroup;
-    private HistoryListFragment historyListFragment;
-    private HistoryGroupFragment historyGroupFragment;
-    private ContactsListFragment contactsListFragment;
-    private ContactsGroupFragment contactsGroupFragment;
-    private CallFragment callFragment;
-    private Call call;
     private android.support.v4.app.FragmentTransaction transaction;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -77,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        call = new Call(this);
         initFragments();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

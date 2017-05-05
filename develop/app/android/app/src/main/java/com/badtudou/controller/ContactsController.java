@@ -20,14 +20,11 @@ import java.util.Map;
 /**
  * Created by badtudou on 12/04/2017.
  */
-public class Contacts {
-    public static final String NAME = "name";
-    public static final String NUMBER = "number";
-    private Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+public class ContactsController {
+
     private ContentResolver contentResolver = null;
-    private Cursor cursor = null;
     private Activity activity;
-    public Contacts(Activity activity) {
+    public ContactsController(Activity activity) {
         this.activity = activity;
         contentResolver =  activity.getContentResolver();
         Util.PermissionRequire(activity, Manifest.permission.READ_CONTACTS);
@@ -44,18 +41,6 @@ public class Contacts {
         itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
-        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
-    }
-
-    public List<Map<String, String>> getGroupsList(){
-        Uri uri = Groups.CONTENT_URI;
-        String[] projection = null;
-        String selection = null;
-        Map<String, String> itemList = new HashMap<>();
-        String[] selectionArgs = null;
-        String sortOrder = null;
-        itemList.put("id", Groups._ID);
-        itemList.put("title", Groups.TITLE);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 

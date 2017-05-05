@@ -3,6 +3,8 @@ package com.badtudou.view.activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -20,17 +22,20 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.badtudou.model.Contacts;
+import com.badtudou.controller.ContactsController;
+import com.badtudou.model.ContactsModel;
 import com.badtudou.model.ImageAdapter;
 import com.badtudou.tudou.R;
 import com.badtudou.util.Util;
 import com.badtudou.tudou.databinding.ActivityDetailsBinding;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 public class DetailsActivity extends AppCompatActivity {
 
-    private Contacts contacts;
+    private ContactsModel contactsModel;
+    private ContactsController contactsControl;
     private GridView gridView;
 
     @Override
@@ -71,6 +76,17 @@ public class DetailsActivity extends AppCompatActivity {
         Map<String, String> map = new HashMap<>();
         map =  Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
 
+        // get photo
+        contactsControl = new ContactsController(this);
+        InputStream inputStream = contactsControl.openPhoto(Long.valueOf(id));
+        Bitmap bmp;
+        if(inputStream != null){
+            bmp = BitmapFactory.decodeStream(inputStream);
+        }else{
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
+        }
+        fab.setImageBitmap(bmp);
+
         // get email
         uri = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
         projection = null;
@@ -84,9 +100,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         }
         map.putAll(mapEmail);
-        contacts = new Contacts();
-        map2Obj(map, contacts);
-        binding.setContacts(contacts);
+        contactsModel = new ContactsModel();
+        map2Obj(map, contactsModel);
+        binding.setContactsModel(contactsModel);
     }
 
     private void initViews(){
@@ -104,12 +120,12 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void map2Obj(Map<String, String> map, Contacts contacts){
+    private void map2Obj(Map<String, String> map, ContactsModel contactsModel){
         long id = Long.valueOf(map.get("id"));
         String dispalyname = map.get("name");
         String phone = map.get("number");
         String email = map.get("email");
-        contacts.set(id, dispalyname, phone, email);
+        contactsModel.set(id, dispalyname, phone, email);
 
     }
 

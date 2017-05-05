@@ -20,7 +20,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.badtudou.model.FragmentViewClickListener;
-import com.badtudou.controller.Ca3log;
+import com.badtudou.controller.Ca3logController;
 import com.badtudou.tudou.R;
 import com.badtudou.util.Util;
 
@@ -48,7 +48,7 @@ public class HistoryListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private View view;
-    private Ca3log ca3log;
+    private Ca3logController ca3LogController;
     private List<Map<String, String>> ca3list;
     private SimpleAdapter adapter;
     private ListView listView;
@@ -94,8 +94,8 @@ public class HistoryListFragment extends Fragment {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_history_list, container, false);
         initViews();
-        ca3log = new Ca3log(getActivity());
-        ca3list = ca3log.getCallsList();
+        ca3LogController = new Ca3logController(getActivity());
+        ca3list = ca3LogController.getCallsList();
         Log.d("Test", ca3list.toString());
         listView = (ListView)view.findViewById(R.id.call_list);
         adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
@@ -140,7 +140,7 @@ public class HistoryListFragment extends Fragment {
                         String typeString = String.valueOf(data);
                         Integer type = Integer.valueOf(typeString);
                         Log.d("Test", "type:"+typeString);
-                        ((ImageView) view).setBackgroundResource(Ca3log.type2Resources.get(type));
+                        ((ImageView) view).setBackgroundResource(Ca3logController.type2Resources.get(type));
                         return true;
                 }
 

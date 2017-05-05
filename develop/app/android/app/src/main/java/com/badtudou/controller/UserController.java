@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by badtudou on 07/04/2017.
  */
-public class User {
+public class UserController {
 
     public static final String USER_NAME = "name";
     public static final String USER_EMAIL = "email";
@@ -23,7 +23,7 @@ public class User {
     private Rest rest = null;
     private ResultCallBack callBack;
 
-    public User(ResultCallBack callBack){
+    public UserController(ResultCallBack callBack){
         this.callBack = callBack;
         this.rest = new Rest(this.msgHandler);
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="contacts" type="com.badtudou.model.Contacts"/>
+        <variable name="contactsModel" type="com.badtudou.model.ContactsModel"/>
     </data>
 
     <LinearLayout
@@ -132,7 +132,7 @@
                             android:textSize="20dp"
                             android:gravity="center"
                             android:tag="binding_1"
-                            android:text="@{contacts.phone}"/>
+                            android:text="@{contactsModel.phone}"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -151,7 +151,7 @@
                             android:textSize="20dp"
                             android:gravity="center"
                             android:tag="binding_2"
-                            android:text="@{contacts.email}"/>
+                            android:text="@{contactsModel.email}"/>
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView> />

@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.badtudou.tudou.R;
 import com.badtudou.util.Rest;
 import com.badtudou.model.ResultCallBack;
-import com.badtudou.controller.User;
+import com.badtudou.controller.UserController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name, password;
                 EditText edit_name, edit_password;
-                User user = new User(new ResultCallBack() {
+                UserController userController = new UserController(new ResultCallBack() {
                     @Override
                     public void handleResult(String resultString) {
                         try {
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 password = edit_password.getText().toString();
 
                 btn_login.setEnabled(false);
-                user.login(name, password);
+                userController.login(name, password);
 
             }
         });

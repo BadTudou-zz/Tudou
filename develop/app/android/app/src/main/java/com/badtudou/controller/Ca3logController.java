@@ -20,12 +20,12 @@ import java.util.Map;
  * CallLog
  */
 
-public class Ca3log {
+public class Ca3logController {
     private Uri uri = CallLog.Calls.CONTENT_URI;
     private ContentResolver contentResolver = null;
     private Activity activity;
 
-    public Ca3log(Activity activity) {
+    public Ca3logController(Activity activity) {
         this.activity = activity;
         contentResolver = activity.getContentResolver();
         Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);

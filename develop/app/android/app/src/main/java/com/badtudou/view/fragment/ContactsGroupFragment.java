@@ -1,12 +1,10 @@
 package com.badtudou.view.fragment;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.badtudou.controller.GroupController;
 import com.badtudou.model.FragmentViewClickListener;
-import com.badtudou.controller.Contacts;
 import com.badtudou.tudou.R;
 
 import java.util.List;
@@ -37,7 +35,7 @@ public class ContactsGroupFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private Contacts contacts;
+    private GroupController groupController;
     private List<Map<String,String>> groupList;
     private SimpleAdapter adapter;
     private View view;
@@ -46,9 +44,7 @@ public class ContactsGroupFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    //private OnFragmentInteractionListener mListener;
-
+    
     public ContactsGroupFragment() {
         // Required empty public constructor
     }
@@ -71,15 +67,6 @@ public class ContactsGroupFragment extends Fragment {
         return fragment;
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,8 +75,8 @@ public class ContactsGroupFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_contacts_group, container, false);
         listView = (ListView)view.findViewById(R.id.contents_group);
         //test
-        contacts = new Contacts(getActivity());
-        groupList = contacts.getGroupsList();
+        groupController = new GroupController(getActivity());
+        groupList = groupController.getGroupsList();
 
         adapter = new SimpleAdapter(view.getContext(), groupList, R.layout.group_list_item,
                 new String[]{"name", "id"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
@@ -101,36 +88,6 @@ public class ContactsGroupFragment extends Fragment {
         initViews();
         return view;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//
-//        if (context instanceof FragmentViewClickListener){
-//            Log.d("Test", "实现接口");
-//            //fragmentViewClickListener = (FragmentViewClickListener) context;
-//
-//        }
-//    }
-
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);

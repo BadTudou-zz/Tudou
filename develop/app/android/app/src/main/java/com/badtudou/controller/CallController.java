@@ -13,11 +13,11 @@ import com.badtudou.util.Util;
  * Created by badtudou on 16/04/2017.
  */
 
-public class Call {
+public class CallController {
 
     private Activity activity;
 
-    public Call(Activity activity) {
+    public CallController(Activity activity) {
         this.activity = activity;
         Util.PermissionRequire(activity, Manifest.permission.CALL_PHONE);
     }

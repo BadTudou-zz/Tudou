@@ -15,7 +15,7 @@
 -->
 
 <!-- Background resource for digit buttons in the various dialpads
-	 used by the Contacts app (see dialpad.xml).
+	 used by the ContactsController app (see dialpad.xml).
      -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true"

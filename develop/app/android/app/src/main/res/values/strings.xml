@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">土豆通讯录</string>
     <string name="title_history">History</string>
-    <string name="title_contacts">Contacts</string>
+    <string name="title_contacts">ContactsModel</string>
     <string name="title_group">Group</string>
     <string name="title_call">Call</string>
     <string name="title_details">Details</string>
@@ -21,7 +21,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
+    <string name="permission_rationale">"ContactsModel permissions are needed for providing email
         completions."
     </string>
     <string name="title_activity_signin">Sign in</string>
@@ -57,15 +57,15 @@
         "and use of imagery guide visual treatments. These elements do far more than please the "
         "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
         "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
+        "interface that immerse the userController in the experience.\n"
+        "An emphasis on userController actions makes core functionality immediately apparent and provides "
+        "waypoints for the userController.\n\n"
 
         "Motion provides meaning.\n\n"
 
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
+        "Motion respects and reinforces the userController as the prime mover. Primary userController actions are "
         "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
+        "All action takes place in a single environment. Objects are presented to the userController without "
         "breaking the continuity of experience even as they transform and reorganize.\n"
         "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
         "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
@@ -104,7 +104,7 @@
         "Responsive elevation and dynamic elevation offsets.\n\n"
 
         "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
+        "to userController input (e.g., normal, focused, and pressed) or system events. These elevation "
         "changes are consistently implemented using dynamic elevation offsets.\n"
         "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
         "to the component’s resting state. They ensure that elevation changes are consistent "
@@ -121,10 +121,10 @@
         "whether on a per component basis or using the entire app layout.\n"
         "On a component level, components can move or be removed before they cause interference. "
         "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
+        "userController picks up a card, or it can move if a snackbar appears.\n"
         "On the layout level, design your app layout to minimize opportunities for interference. "
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
+        "when a userController tries to pick up one of cards.\n\n"
     </string>
 
 </resources>
