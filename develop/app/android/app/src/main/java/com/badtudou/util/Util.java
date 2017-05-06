@@ -3,9 +3,11 @@ package com.badtudou.util;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -57,6 +59,10 @@ public class Util {
                 cursor.close();
         }
         return list;
+    }
+
+    public static Uri ContentResolverInsert(ContentResolver contentResolver, Uri uri, ContentValues values){
+        return contentResolver.insert(uri, values);
     }
 
     /**

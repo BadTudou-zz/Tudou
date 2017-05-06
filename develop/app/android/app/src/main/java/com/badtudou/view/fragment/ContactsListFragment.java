@@ -109,7 +109,6 @@ public class ContactsListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Test", contactsList.get(position).toString());
                 Long personId = Long.parseLong(contactsList.get(position).get("id"));
 
                 Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
@@ -143,8 +142,6 @@ public class ContactsListFragment extends Fragment {
                     }
                     ((ImageView) view).setImageBitmap(bmp);
 
-
-                    Log.d("Test", "show photo"+String.valueOf(data));
                     return  true;
                 }
                 return false;

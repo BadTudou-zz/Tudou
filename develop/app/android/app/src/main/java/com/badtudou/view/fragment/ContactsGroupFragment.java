@@ -1,13 +1,17 @@
 package com.badtudou.view.fragment;
 
+import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 import com.badtudou.controller.GroupController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
+import com.badtudou.util.Util;
 
 import java.util.List;
 import java.util.Map;
@@ -78,11 +83,20 @@ public class ContactsGroupFragment extends Fragment {
         //test
         groupController = new GroupController(getActivity());
         groupList = groupController.getGroupsList();
+        Log.d("Test", groupList.toString());
 
         adapter = new SimpleAdapter(view.getContext(), groupList, R.layout.group_list_item,
-                new String[]{"name", "id"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
+                new String[]{"title", "count"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Long groupId = Long.parseLong(groupList.get(position).get("id"));
+                Log.d("Test", "Me" + groupController.getMembership(groupId));
+            }
+        });
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
