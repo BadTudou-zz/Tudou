@@ -91,7 +91,7 @@ public class HistoryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the expandable_selector for this fragment
         view =  inflater.inflate(R.layout.fragment_history_list, container, false);
         initViews();
         ca3LogController = new Ca3logController(getActivity());

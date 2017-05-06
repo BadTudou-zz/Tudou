@@ -83,7 +83,7 @@ public class ContactsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the expandable_selector for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);

@@ -22,7 +22,7 @@
                 android:background="@drawable/vector_drawable_back"/>
 
             <TextView
-                android:id="@+id/text_group_or_contacts"
+                android:id="@+id/text_contacts"
                 android:layout_weight="14"
                 android:textAlignment="center"
                 android:layout_width="wrap_content"

@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements
     private void switchFramentInGroup(List<Fragment> group){
         int indexOfShowFrament = group.get(0).isVisible()?1:0;
         showFragment(group.get(indexOfShowFrament));
+
     }
 
     // 设置活动导航栏的bar

@@ -76,6 +76,10 @@ public class DetailsActivity extends AppCompatActivity {
         Map<String, String> map = new HashMap<>();
         map =  Util.ContentResolverSearch(getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
 
+        // dispaly name
+        TextView textViewName = (TextView)findViewById(R.id.text_contacts);
+        textViewName.setText(map.get("name"));
+
         // get photo
         contactsControl = new ContactsController(this);
         InputStream inputStream = contactsControl.openPhoto(Long.valueOf(id));

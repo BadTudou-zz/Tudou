@@ -46,7 +46,6 @@
         android:id="@+id/button_group_expand_or_fold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/arrow_down_float"
         android:layout_alignBottom="@+id/txt_group_memberSize"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />

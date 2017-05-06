@@ -5,7 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 
 import com.badtudou.model.FragmentViewClickListener;
@@ -43,7 +47,6 @@ public class HistoryGroupFragment extends Fragment {
     private ExpandableListAdapter adapter;
     private View view;
     private ExpandableListView listView;
-    private HistoryListFragment.OnFragmentInteractionListener mListener;
     private FragmentViewClickListener fragmentViewClickListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -52,6 +55,7 @@ public class HistoryGroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_history_group, container, false);
         listView = (ExpandableListView)view.findViewById(R.id.history_group);
+        //listView.setGroupIndicator(null);
         ca3LogController = new Ca3logController(getActivity());
         ca3list = new ArrayList<>();
         groupList = new ArrayList<>();
@@ -67,31 +71,27 @@ public class HistoryGroupFragment extends Fragment {
                 R.layout.history_list_item,
                 new String[]{"number", "date"},
                 new int[]{R.id.txt_number, R.id.txt_date});
+
+        // expand
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                ImageView imageview = (ImageView)v.findViewById(R.id.button_history_expand_or_fold);
+                if (parent.isGroupExpanded(groupPosition)) {
+                    imageview.setImageResource(R.drawable.vector_drawable_down);
+                } else{
+                    imageview.setImageResource(R.drawable.vector_drawable_up);
+                }
+                return false;
+            }
+        });
+
         listView.setAdapter(adapter);
-       // adapter.
-        //adapter.
-        //adapter.notifyDataSetChanged();
+
         initViews();
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof HistoryListFragment.OnFragmentInteractionListener) {
-            mListener = (HistoryListFragment.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-
-        if (context instanceof FragmentViewClickListener){
-            Log.d("Test", "实现接口");
-            fragmentViewClickListener = (FragmentViewClickListener) context;
-
-        }
     }
 
     private void initViews() {
@@ -100,6 +100,7 @@ public class HistoryGroupFragment extends Fragment {
 
         button_add.setOnClickListener((FragmentViewClickListener)getActivity());
         button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_history_style.setBackgroundResource(R.drawable.vector_drawable_group);
 
     }
 

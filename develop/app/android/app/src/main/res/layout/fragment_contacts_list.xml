@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.badtudou.tudou.com.badtudou.view.fragment.ContactsListFragment">
-    <!-- TODO: Update blank fragment layout -->
+    tools:context="com.badtudou.view.fragment.ContactsListFragment">
+    <!-- TODO: Update blank fragment expandable_selector -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

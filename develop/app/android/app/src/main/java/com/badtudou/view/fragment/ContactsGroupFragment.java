@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -44,7 +45,7 @@ public class ContactsGroupFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    
+
     public ContactsGroupFragment() {
         // Required empty public constructor
     }
@@ -71,7 +72,7 @@ public class ContactsGroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
+        // Inflate the expandable_selector for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_group, container, false);
         listView = (ListView)view.findViewById(R.id.contents_group);
         //test
@@ -95,6 +96,7 @@ public class ContactsGroupFragment extends Fragment {
         TextView textView_title = (TextView)view.findViewById(R.id.text_group_or_contacts);
 
         button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+        button_switch_contact_style.setBackgroundResource(R.drawable.vector_drawable_group);
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         textView_title.setText(R.string.title_group);

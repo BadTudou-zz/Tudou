@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    tools:context="com.badtudou.tudou.com.badtudou.view.fragment.CallFragment">
+    tools:context="com.badtudou.view.fragment.CallFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
