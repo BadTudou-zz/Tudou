@@ -12,17 +12,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import com.badtudou.controller.ContactsController;
 import com.badtudou.controller.GroupController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
 import com.badtudou.util.Util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +48,12 @@ public class ContactsGroupFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private GroupController groupController;
+    private ContactsController contactsController;
     private List<Map<String,String>> groupList;
-    private SimpleAdapter adapter;
+    private List<List<Map<String, String>>> contactsList;
+    private ExpandableListAdapter adapter;
     private View view;
-    private ListView listView;
+    private ExpandableListView listView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,22 +87,48 @@ public class ContactsGroupFragment extends Fragment {
 
         // Inflate the expandable_selector for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_group, container, false);
-        listView = (ListView)view.findViewById(R.id.contents_group);
+        listView = (ExpandableListView)view.findViewById(R.id.contents_group);
         //test
         groupController = new GroupController(getActivity());
+        contactsController = new ContactsController(getActivity());
         groupList = groupController.getGroupsList();
+        contactsList = new ArrayList<>();
+        for(Map<String, String>  map : groupList){
+            List<Map<String, String>> idList;
+            List<Map<String, String>> contacts = new ArrayList<>();
+            String idString = map.get("id");
+            Long id = Long.valueOf(idString);
+            idList = groupController.getMembership(id);
+            for(Map<String, String> mapId : idList){
+                String contactsIdString = mapId.get("id");
+                Long contactsId= Long.valueOf(idString);
+                contacts.add(contactsController.getContactsById(contactsId));
+            }
+            contactsList.add(contacts);
+        }
+
         Log.d("Test", groupList.toString());
 
-        adapter = new SimpleAdapter(view.getContext(), groupList, R.layout.group_list_item,
-                new String[]{"title", "count"}, new int[]{R.id.txt_group, R.id.txt_group_memberSize});
+        adapter = new SimpleExpandableListAdapter(
+                view.getContext(),
+                groupList,
+                R.layout.group_list_item,
+                new String[]{"title", "count"},
+                new int[]{R.id.txt_group, R.id.txt_group_memberSize},
+                contactsList,
+                R.layout.contacts_list_item,
+                new String[]{"name", "number"}, new int[]{R.id.txt_name, R.id.txt_phone});
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long groupId = Long.parseLong(groupList.get(position).get("id"));
-                Log.d("Test", "Me" + groupController.getMembership(groupId));
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                ImageView imageview = (ImageView)v.findViewById(R.id.button_history_expand_or_fold);
+                if (parent.isGroupExpanded(groupPosition)) {
+                    imageview.setImageResource(R.drawable.vector_drawable_down);
+                } else{
+                    imageview.setImageResource(R.drawable.vector_drawable_up);
+                }
+                return false;
             }
         });
 

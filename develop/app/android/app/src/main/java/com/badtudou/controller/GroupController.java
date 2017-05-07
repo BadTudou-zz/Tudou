@@ -51,8 +51,9 @@ public class GroupController {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = {String.valueOf(id), ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE};
         String sortOrder = null;
-        itemList.put("id", ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID);
-        itemList.put("contact_id", ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID);
+        itemList.put("id", ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID);
+        itemList.put("name", ContactsContract.CommonDataKinds.GroupMembership.DISPLAY_NAME);
+        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
         return  Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 

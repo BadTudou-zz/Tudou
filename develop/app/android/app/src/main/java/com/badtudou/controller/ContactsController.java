@@ -44,6 +44,20 @@ public class ContactsController {
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
+    public Map<String, String> getContactsById(Long id){
+        List<Map<String, String>> resultList = null;
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = null;
+        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = {String.valueOf(id)};;
+        String sortOrder = null;
+        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+        resultList = Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
+        return resultList.size()==1?resultList.get(0):null;
+    }
+
     public List<Map<String, String>> getContactsByName(String name){
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = null;
