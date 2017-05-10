@@ -1,6 +1,7 @@
 package com.badtudou.view.activity;
 
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.view.fragment.CallFragment;
@@ -22,8 +25,10 @@ import com.badtudou.view.fragment.ContactsListFragment;
 import com.badtudou.view.fragment.HistoryGroupFragment;
 import com.badtudou.view.fragment.HistoryListFragment;
 import com.badtudou.tudou.R;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements
     private List<Fragment> fragmentList;
     private Map<Integer,List<Fragment>> navItem2framnetGroup;
     private android.support.v4.app.FragmentTransaction transaction;
+    FloatingActionMenu materialDesignFAM;
+    FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,12 +79,53 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
         initFragments();
+//        materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+//        floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
+//        floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
+//        floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
+//
+//        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                //TODO something when floating action menu first item clicked
+//                Toast.makeText(MainActivity.this, "Fab Clicked1", Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+//        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                //TODO something when floating action menu second item clicked
+//                Toast.makeText(MainActivity.this, "Fab Clicked2", Toast.LENGTH_LONG).show();
+//            }
+//        });
+//        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                //TODO something when floating action menu third item clicked
+//                Toast.makeText(MainActivity.this, "Fab Clicked3", Toast.LENGTH_LONG).show();
+//            }
+//        });
+        //initFloatingActions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_contacts);
 
     }
 
+    private void initFloatingActions(){
+        List<Integer> floatingActionButtonIds = Arrays.asList(
+                R.id.material_design_floating_action_menu_call,
+                R.id.material_design_floating_action_menu_mms,
+                R.id.material_design_floating_action_menu_share,
+                R.id.material_design_floating_action_menu_delete);
+//        floatingActionButtonMap = new HashMap<>();
+//        materialDesignFAM = (FloatingActionMenu)findViewById(R.id.material_design_android_floating_action_menu);
+//
+//        for(Integer id : floatingActionButtonIds){
+//            FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(id);
+//            floatingActionButton.setOnClickListener(this);
+//            floatingActionButtonMap.put(id, floatingActionButton);
+//        }
+
+    }
     // 初始化所有fragment，并绑定导航栏项到fragment组
     private void initFragments(){
         HistoryListFragment historyListFragment = new HistoryListFragment();
@@ -202,6 +251,50 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.button_switch_contact_style:
                 switchFramentInGroup(navItem2framnetGroup.get(R.id.navigation_contacts));
                 break;
+
+            case R.id.material_design_floating_action_menu_item3:
+                Log.d("Test", "click xxx");
+                break;
+
+
         }
     }
+
+    @Override
+    public void viewClick(View v, Map map) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.material_design_floating_action_menu_call:
+                Log.d("Test", "click call"+map.toString());
+                break;
+
+            case R.id.material_design_floating_action_menu_mms:
+                Log.d("Test", "click mms");
+                break;
+
+            case R.id.contents_list:
+                Log.d("Test", "click button");
+                Log.d("Test", "list ddd"+map.toString());
+//                materialDesignFAM.setFocusable(true);
+//                materialDesignFAM.setFocusableInTouchMode(true);
+//                materialDesignFAM.requestFocus();
+//                Long personId = (Long)(map.get("id"));
+//                if(personId == -1){
+//                    materialDesignFAM.close(true);
+//                }else{
+//                    materialDesignFAM.close(true);
+//                    materialDesignFAM.open(true);
+//                }
+
+
+                break;
+            default:
+                Log.d("Test", String.valueOf(id));
+                break;
+
+        }
+
+        Log.d("Test", "dddddd");
+    }
+
 }

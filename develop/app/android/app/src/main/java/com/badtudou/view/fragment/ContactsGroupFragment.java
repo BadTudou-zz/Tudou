@@ -1,6 +1,9 @@
 package com.badtudou.view.fragment;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -55,6 +58,7 @@ public class ContactsGroupFragment extends Fragment {
     private View view;
     private ExpandableListView listView;
 
+    private FragmentViewClickListener fragmentViewClickListener;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -132,11 +136,33 @@ public class ContactsGroupFragment extends Fragment {
             }
         });
 
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Long personId = Long.valueOf(contactsList.get(groupPosition).get(childPosition).get("id"));
+                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
+                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
+                //startActivity(intent);
+                v.setId(R.id.contents_list);
+                Map<Object , Object> map = new HashMap<Object, Object>();
+                map.put("id", personId);
+                fragmentViewClickListener.viewClick(v, map);
+
+                return false;
+            }
+        });
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         initViews();
         return view;
     }
+
+    @Override
+    public void onAttach(Context context) {
+        fragmentViewClickListener = (FragmentViewClickListener)context;
+        super.onAttach(context);
+    }
+
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);

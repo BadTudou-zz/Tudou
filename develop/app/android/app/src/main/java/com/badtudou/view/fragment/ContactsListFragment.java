@@ -1,6 +1,8 @@
 package com.badtudou.view.fragment;
 
+import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,12 +10,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,12 +25,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.badtudou.controller.ContactsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +64,8 @@ public class ContactsListFragment extends Fragment {
     private ListView listView;
 
     private FragmentViewClickListener fragmentViewClickListener;
+    private FloatingActionMenu floatingActionMenu;
+    private FloatingActionButton fab;
 
     public ContactsListFragment() {
         // Required empty public constructor
@@ -94,6 +104,46 @@ public class ContactsListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        floatingActionMenu = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
+        fab = (FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item1);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "click 1", Toast.LENGTH_SHORT).show();
+            }
+        });
+        floatingActionMenu.setClosedOnTouchOutside(true);
+        floatingActionMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                String text;
+                if (opened) {
+                    text = "Menu opened";
+                } else {
+                    text = "Menu closed";
+                }
+                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+//        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("Test", String.valueOf(v.getId()));
+//            }
+//        });
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        fragmentViewClickListener = (FragmentViewClickListener)context;
+        super.onAttach(context);
+    }
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
@@ -103,9 +153,29 @@ public class ContactsListFragment extends Fragment {
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         listView = (ListView)view.findViewById(R.id.contents_list);
+//        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                Toast.makeText(getActivity(), "Fab Clicked", Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+
+        //fab.att(listView);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Map<Object , Object> map = new HashMap<Object, Object>();
+                map.put("id", Long.valueOf(-1));
+                fragmentViewClickListener.viewClick(v, map);
+                return false;
+            }
+        });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -113,7 +183,12 @@ public class ContactsListFragment extends Fragment {
 
                 Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
                 Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
-                startActivity(intent);
+                Map<Object , Object> map = new HashMap<Object, Object>();
+                map.put("id", personId);
+                listView.setFocusableInTouchMode(false);
+                fragmentViewClickListener.viewClick(listView, map);
+                //startActivity(intent);
+
             }
         });
 

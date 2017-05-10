@@ -52,6 +52,7 @@ public class ContactsController {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = {String.valueOf(id)};;
         String sortOrder = null;
+        itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
         resultList = Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
@@ -65,6 +66,7 @@ public class ContactsController {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = {"%"+name+"%"};;
         String sortOrder = null;
+        itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
@@ -77,6 +79,7 @@ public class ContactsController {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = {"%"+number+"%"};
         String sortOrder = null;
+        itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
