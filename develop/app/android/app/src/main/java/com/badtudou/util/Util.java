@@ -65,6 +65,9 @@ public class Util {
         return contentResolver.insert(uri, values);
     }
 
+    public static int ContentResolverDelete(ContentResolver contentResolver, Uri uri, String where, String[] selectionArgs){
+        return contentResolver.delete(uri, where, selectionArgs);
+    }
     /**
      * 请求权限
      * @param activity   activity

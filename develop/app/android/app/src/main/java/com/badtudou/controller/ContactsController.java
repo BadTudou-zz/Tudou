@@ -106,4 +106,12 @@ public class ContactsController {
         return null;
     }
 
+    public int deleteContacts(long contactId){
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+        //String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " LIKE ?";
+        //String[] selectionArgs = {String.valueOf(contactId)};
+        return Util.ContentResolverDelete(contentResolver, contactUri, null, null);
+
+    }
+
 }

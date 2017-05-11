@@ -27,13 +27,16 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.badtudou.controller.CallController;
 import com.badtudou.controller.ContactsController;
+import com.badtudou.controller.SmsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,14 +61,18 @@ public class ContactsListFragment extends Fragment {
     private String mParam2;
 
     private ContactsController contactsController;
+    private CallController callController;
+    private SmsController smsController;
     private List<Map<String,String>> contactsList;
     private SimpleAdapter adapter;
     private View view;
     private ListView listView;
 
     private FragmentViewClickListener fragmentViewClickListener;
+    private View.OnClickListener onClickListener;
+    private List<Integer> floatingActionButtonIds;
     private FloatingActionMenu floatingActionMenu;
-    private FloatingActionButton fab;
+    private int activiteContactsIndex = -1;
 
     public ContactsListFragment() {
         // Required empty public constructor
@@ -108,13 +115,6 @@ public class ContactsListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         floatingActionMenu = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
-        fab = (FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item1);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "click 1", Toast.LENGTH_SHORT).show();
-            }
-        });
         floatingActionMenu.setClosedOnTouchOutside(true);
         floatingActionMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
@@ -125,17 +125,60 @@ public class ContactsListFragment extends Fragment {
                 } else {
                     text = "Menu closed";
                 }
-                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
             }
         });
 
+        onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = v.getId();
+                if(activiteContactsIndex == -1){
+                    return;
+                }
+                Map<String,String> map = new HashMap<>();
+                map = contactsList.get(activiteContactsIndex);
+                Log.d("Test", map.toString());
+                switch (id){
+                    case R.id.material_design_floating_action_menu_call:
+                        Log.d("Test", map.get("number"));
+                        callController.callPhone(map.get("number"));
+                        break;
+                    case R.id.material_design_floating_action_menu_sms:
+                        smsController.sendSms(map.get("number"), "");
+                        break;
+                    case R.id.material_design_floating_action_menu_share:
+                        break;
+                    case R.id.material_design_floating_action_menu_delete:
+                        int result = contactsController.deleteContacts(Long.valueOf(map.get("id")));
+                        if (result ==1) {
+                            contactsList.remove(activiteContactsIndex);
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:
+                        Log.d("Test", String.valueOf(id));
+                        break;
+                }
+                activiteContactsIndex = -1;
+                floatingActionMenu.close(true);
 
-//        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("Test", String.valueOf(v.getId()));
-//            }
-//        });
+            }
+        };
+
+        floatingActionButtonIds = new ArrayList<>();
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_call);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_sms);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_share);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_delete);
+
+        for(Integer floatingActionButtonId : floatingActionButtonIds){
+            FloatingActionButton fb = (FloatingActionButton)view.findViewById(floatingActionButtonId);
+            fb.setOnClickListener(onClickListener);
+        }
+
+
 
     }
 
@@ -153,49 +196,41 @@ public class ContactsListFragment extends Fragment {
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         listView = (ListView)view.findViewById(R.id.contents_list);
-//        fab = (FloatingActionButton) view.findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Toast.makeText(getActivity(), "Fab Clicked", Toast.LENGTH_LONG).show();
-//
-//            }
-//        });
-
-        //fab.att(listView);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Map<Object , Object> map = new HashMap<Object, Object>();
-                map.put("id", Long.valueOf(-1));
-                fragmentViewClickListener.viewClick(v, map);
+                activiteContactsIndex = -1;
+                floatingActionMenu.close(true);
                 return false;
             }
         });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long personId = Long.parseLong(contactsList.get(position).get("id"));
-
-                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
-                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
-                Map<Object , Object> map = new HashMap<Object, Object>();
-                map.put("id", personId);
-                listView.setFocusableInTouchMode(false);
-                fragmentViewClickListener.viewClick(listView, map);
+                activiteContactsIndex = position;
+//                Long personId = Long.parseLong(contactsList.get(position).get("id"));
+//
+//                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
+//                Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
+//                Map<Object , Object> map = new HashMap<Object, Object>();
+//                map.put("id", personId);
+                //fragmentViewClickListener.viewClick(listView, map);
                 //startActivity(intent);
+                floatingActionMenu.close(true);
+                floatingActionMenu.open(true);
 
             }
         });
-
     }
 
     private void initDates(){
         contactsController = new ContactsController(getActivity());
+        callController = new CallController(getActivity());
+        smsController = new SmsController(getActivity());
         contactsList = contactsController.getContactsList();
 
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,

@@ -19,7 +19,7 @@
         fab:menu_colorNormal="#da3c2f"
         fab:menu_colorPressed="#dc4b3f"
         fab:menu_colorRipple="#99d4d4d4"
-        fab:menu_fab_label="Floating Action Menu"
+        fab:menu_fab_label=""
         fab:menu_fab_size="normal"
         fab:menu_icon="@drawable/fab_add"
         fab:menu_labels_colorNormal="#333"
@@ -45,27 +45,35 @@
         fab:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/material_design_floating_action_menu_item1"
+            android:id="@+id/material_design_floating_action_menu_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_call"
-            fab:fab_label="Menu Item 1"
+            android:src="@android:drawable/ic_menu_call"
+            fab:fab_label="拨号"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/material_design_floating_action_menu_item2"
+            android:id="@+id/material_design_floating_action_menu_sms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_call"
-            fab:fab_label="Menu Item 2"
+            android:src="@android:drawable/ic_menu_send"
+            fab:fab_label="短信"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/material_design_floating_action_menu_item3"
+            android:id="@+id/material_design_floating_action_menu_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_call"
-            fab:fab_label="Menu Item 3"
+            android:src="@android:drawable/ic_menu_share"
+            fab:fab_label="分享"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/material_design_floating_action_menu_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"
+            fab:fab_label="删除"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

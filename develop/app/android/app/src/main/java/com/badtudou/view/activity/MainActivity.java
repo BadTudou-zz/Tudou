@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements
     private List<Fragment> fragmentList;
     private Map<Integer,List<Fragment>> navItem2framnetGroup;
     private android.support.v4.app.FragmentTransaction transaction;
-    FloatingActionMenu materialDesignFAM;
-    FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -252,10 +250,6 @@ public class MainActivity extends AppCompatActivity implements
                 switchFramentInGroup(navItem2framnetGroup.get(R.id.navigation_contacts));
                 break;
 
-            case R.id.material_design_floating_action_menu_item3:
-                Log.d("Test", "click xxx");
-                break;
-
 
         }
     }
@@ -293,8 +287,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
         }
-
-        Log.d("Test", "dddddd");
     }
 
 }
