@@ -1,18 +1,17 @@
 package com.badtudou.view.fragment;
 
-import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,6 +31,10 @@ import com.badtudou.controller.ContactsController;
 import com.badtudou.controller.SmsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -66,7 +69,7 @@ public class ContactsListFragment extends Fragment {
     private List<Map<String,String>> contactsList;
     private SimpleAdapter adapter;
     private View view;
-    private ListView listView;
+    private SwipeMenuListView listView;
 
     private FragmentViewClickListener fragmentViewClickListener;
     private View.OnClickListener onClickListener;
@@ -102,6 +105,15 @@ public class ContactsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the expandable_selector for this fragment
         view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getActivity(), "Refresh success", Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         initDates();
@@ -116,6 +128,18 @@ public class ContactsListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         floatingActionMenu = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
         floatingActionMenu.setClosedOnTouchOutside(true);
+        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!listView.isSelected()){
+                    Toast.makeText(getActivity(), "没有选择展开菜单", Toast.LENGTH_SHORT).show();
+                }
+                if(floatingActionMenu.isOpened()){
+                    floatingActionMenu.close(true);
+                }
+
+            }
+        });
         floatingActionMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
             public void onMenuToggle(boolean opened) {
@@ -149,13 +173,14 @@ public class ContactsListFragment extends Fragment {
                         break;
                     case R.id.material_design_floating_action_menu_share:
                         break;
-                    case R.id.material_design_floating_action_menu_delete:
-                        int result = contactsController.deleteContacts(Long.valueOf(map.get("id")));
-                        if (result ==1) {
-                            contactsList.remove(activiteContactsIndex);
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
-                        }
+                    case R.id.material_design_floating_action_menu_details:
+                        contactsController.viewDetails(Long.parseLong(map.get("id")));
+//                        int result = contactsController.deleteContacts(Long.valueOf(map.get("id")));
+//                        if (result ==1) {
+//                            contactsList.remove(activiteContactsIndex);
+//                            adapter.notifyDataSetChanged();
+//                            Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
+//                        }
                         break;
                     default:
                         Log.d("Test", String.valueOf(id));
@@ -171,7 +196,7 @@ public class ContactsListFragment extends Fragment {
         floatingActionButtonIds.add(R.id.material_design_floating_action_menu_call);
         floatingActionButtonIds.add(R.id.material_design_floating_action_menu_sms);
         floatingActionButtonIds.add(R.id.material_design_floating_action_menu_share);
-        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_delete);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_details);
 
         for(Integer floatingActionButtonId : floatingActionButtonIds){
             FloatingActionButton fb = (FloatingActionButton)view.findViewById(floatingActionButtonId);
@@ -190,20 +215,66 @@ public class ContactsListFragment extends Fragment {
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style_group);
 
         button_add.setOnClickListener((FragmentViewClickListener)getActivity());
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
-        listView = (ListView)view.findViewById(R.id.contents_list);
+        listView = (SwipeMenuListView) view.findViewById(R.id.contents_list);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(getContext());
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
+                        0xCE)));
+                // set item width
+                openItem.setWidth(180);
+                // set item title
+                openItem.setTitle("Open");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(180);
+                // set a icon
+                deleteItem.setIcon(R.drawable.ic_menu_manage);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+        listView.setMenuCreator(creator);
+        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                Log.d("Test", String.valueOf(position)+":"+String.valueOf(index));
+                return false;
+            }
+        });
+        listView.setSwipeDirection(SwipeMenuListView.DIRECTION_RIGHT);
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 activiteContactsIndex = -1;
-                floatingActionMenu.close(true);
+                if(!listView.isSelected())
+                    floatingActionMenu.close(true);
+                else
+                    floatingActionMenu.open(true);
                 return false;
             }
         });
@@ -212,6 +283,7 @@ public class ContactsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 activiteContactsIndex = position;
+                Toast.makeText(getActivity(), "click item"+String.valueOf(position), Toast.LENGTH_SHORT).show();
 //                Long personId = Long.parseLong(contactsList.get(position).get("id"));
 //
 //                Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, personId);// info.id联系人ID
@@ -220,7 +292,10 @@ public class ContactsListFragment extends Fragment {
 //                map.put("id", personId);
                 //fragmentViewClickListener.viewClick(listView, map);
                 //startActivity(intent);
-                floatingActionMenu.close(true);
+                //floatingActionMenu.close(true);
+//                if(floatingActionMenu.isOpened()){
+//                    floatingActionMenu.open(true);
+//                }
                 floatingActionMenu.open(true);
 
             }
@@ -254,9 +329,12 @@ public class ContactsListFragment extends Fragment {
 
                     return  true;
                 }
+                Integer id = view.getId();
+                Log.d("Test", String.valueOf(id));
                 return false;
             }
         });
+
     }
 
     /**
@@ -275,3 +353,5 @@ public class ContactsListFragment extends Fragment {
     }
 
 }
+
+

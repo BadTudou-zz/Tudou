@@ -43,9 +43,14 @@ public class MainActivity extends AppCompatActivity implements
         FragmentViewClickListener {
 
     private FragmentManager fragmentManager;
-    private List<Fragment> fragmentList;
-    private Map<Integer,List<Fragment>> navItem2framnetGroup;
+    private List<Fragment> fragmentsList;
+    private Map<String,Fragment> fragmentsMap;
     private android.support.v4.app.FragmentTransaction transaction;
+    private String FRAGMENT_HISTORY_LIST = "FRAGMENT_HISTORY_LIST";
+    private String FRAGMENT_HISTORY_GROUP = "FRAGMENT_HISTORY_GROUP";
+    private String FRAGMENT_CONTACTS_LIST = "FRAGMENT_CONTACTS_LIST";
+    private String FRAGMENT_CONTACTS_GROUP = "FRAGMENT_CONTACTS_GROUP";
+    private String FRAGMENT_CALL = "FRAGMENT_CALL";
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -56,14 +61,18 @@ public class MainActivity extends AppCompatActivity implements
             transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()){
                 case R.id.navigation_history:
+                    showFragment(fragmentsMap.get(FRAGMENT_HISTORY_LIST));
+                    break;
                 case R.id.navigation_contacts:
+                    showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_LIST));
+                    break;
                 case R.id.navigation_call:
                     // TODO 根据用户设置切换显示风格
-                    showFragment(navItem2framnetGroup.get(item.getItemId()).get(0));
-                    setActiviteNavigationItemBar(item.getItemId());
-                    return true;
+                    showFragment(fragmentsMap.get(FRAGMENT_CALL));
+                    break;
             }
-            return false;
+            setActiviteNavigationItemBar(item.getItemId());
+            return true;
         }
 
     };
@@ -73,58 +82,18 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        initFragments();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        initFragments();
-//        materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
-//        floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
-//        floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
-//        floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
-//
-//        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                //TODO something when floating action menu first item clicked
-//                Toast.makeText(MainActivity.this, "Fab Clicked1", Toast.LENGTH_LONG).show();
-//
-//            }
-//        });
-//        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                //TODO something when floating action menu second item clicked
-//                Toast.makeText(MainActivity.this, "Fab Clicked2", Toast.LENGTH_LONG).show();
-//            }
-//        });
-//        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                //TODO something when floating action menu third item clicked
-//                Toast.makeText(MainActivity.this, "Fab Clicked3", Toast.LENGTH_LONG).show();
-//            }
-//        });
-        //initFloatingActions();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_contacts);
 
     }
 
-    private void initFloatingActions(){
-        List<Integer> floatingActionButtonIds = Arrays.asList(
-                R.id.material_design_floating_action_menu_call,
-                R.id.material_design_floating_action_menu_mms,
-                R.id.material_design_floating_action_menu_share,
-                R.id.material_design_floating_action_menu_delete);
-//        floatingActionButtonMap = new HashMap<>();
-//        materialDesignFAM = (FloatingActionMenu)findViewById(R.id.material_design_android_floating_action_menu);
-//
-//        for(Integer id : floatingActionButtonIds){
-//            FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(id);
-//            floatingActionButton.setOnClickListener(this);
-//            floatingActionButtonMap.put(id, floatingActionButton);
-//        }
 
-    }
-    // 初始化所有fragment，并绑定导航栏项到fragment组
+    // 初始化所有fragment
     private void initFragments(){
         HistoryListFragment historyListFragment = new HistoryListFragment();
         HistoryGroupFragment historyGroupFragment = new HistoryGroupFragment();
@@ -132,35 +101,17 @@ public class MainActivity extends AppCompatActivity implements
         ContactsGroupFragment contactsGroupFragment = new ContactsGroupFragment();
         CallFragment callFragment = new CallFragment();
 
-        fragmentList = new ArrayList<>();
-        navItem2framnetGroup= new HashMap<>();
+        fragmentsMap = new HashMap<>();
+        fragmentsMap.put(FRAGMENT_HISTORY_LIST, historyListFragment);
+        fragmentsMap.put(FRAGMENT_HISTORY_GROUP, historyGroupFragment);
+        fragmentsMap.put(FRAGMENT_CONTACTS_LIST, contactsListFragment);
+        fragmentsMap.put(FRAGMENT_CONTACTS_GROUP, contactsGroupFragment);
+        fragmentsMap.put(FRAGMENT_CALL, callFragment);
 
-        // bind NavigationItem id to history fragments
-        List<Fragment> historyFragmentList = new ArrayList<>();
-        historyFragmentList.add(historyListFragment);
-        historyFragmentList.add(historyGroupFragment);
-        navItem2framnetGroup.put(R.id.navigation_history, fragmentList);
-
-        // bind NavigationItem id to  contacts fragments
-        List<Fragment> contactsFragmentList = new ArrayList<>();
-        contactsFragmentList.add(contactsListFragment);
-        contactsFragmentList.add(contactsGroupFragment);
-        navItem2framnetGroup.put(R.id.navigation_contacts, contactsFragmentList);
-
-        // bind NavigationItem id to  contacts call fragments
-        List<Fragment> callFragmentList = new ArrayList<>();
-        callFragmentList.add(callFragment);
-        callFragmentList.add(callFragment); // 重复项，为了实现上面类型的fragment切换
-        navItem2framnetGroup.put(R.id.navigation_call, callFragmentList);
-
-        // merge all fragments
-        fragmentList.addAll(historyFragmentList);
-        fragmentList.addAll(contactsFragmentList);
-        fragmentList.addAll(callFragmentList);
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
-        for(Fragment fragment: fragmentList){
+        for(Fragment fragment: fragmentsMap.values()){
             transaction.add(R.id.content, fragment);
         }
 
@@ -168,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // 隐藏所有framgnet
     private void hideAllFragments(){
-        for(Fragment fragment: fragmentList){
+        for(Fragment fragment: fragmentsMap.values()){
             transaction.hide(fragment);
         }
     }
@@ -185,12 +136,6 @@ public class MainActivity extends AppCompatActivity implements
         transaction.commit();
     }
 
-    // 切换显示风格：列表 与 分组
-    private void switchFramentInGroup(List<Fragment> group){
-        int indexOfShowFrament = group.get(0).isVisible()?1:0;
-        showFragment(group.get(indexOfShowFrament));
-
-    }
 
     // 设置活动导航栏的bar
     private void setActiviteNavigationItemBar(int itemId){
@@ -203,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements
             ((TextView) findViewById(itemBarId)).setBackgroundResource(R.color.colorActiviBarOff);
         }
 
-        // activite
         ((TextView) findViewById(item2bar.get(itemId))).setBackgroundResource(R.color.colorActiviBarOn);
 
     }
@@ -242,12 +186,20 @@ public class MainActivity extends AppCompatActivity implements
     public void onClick(View v) {
         int id = v.getId();
         switch (id){
-            case R.id.button_switch_history_style:
-                switchFramentInGroup(navItem2framnetGroup.get(R.id.navigation_history));
+            case R.id.button_switch_history_style_list:
+                showFragment(fragmentsMap.get(FRAGMENT_HISTORY_LIST));
                 break;
 
-            case R.id.button_switch_contact_style:
-                switchFramentInGroup(navItem2framnetGroup.get(R.id.navigation_contacts));
+            case R.id.button_switch_history_style_group:
+                showFragment(fragmentsMap.get(FRAGMENT_HISTORY_GROUP));
+                break;
+
+            case R.id.button_switch_contact_style_list:
+                showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_LIST));
+                break;
+
+            case R.id.button_switch_contact_style_group:
+                showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_GROUP));
                 break;
 
 
@@ -258,30 +210,6 @@ public class MainActivity extends AppCompatActivity implements
     public void viewClick(View v, Map map) {
         int id = v.getId();
         switch (id) {
-            case R.id.material_design_floating_action_menu_call:
-                Log.d("Test", "click call"+map.toString());
-                break;
-
-            case R.id.material_design_floating_action_menu_mms:
-                Log.d("Test", "click mms");
-                break;
-
-            case R.id.contents_list:
-                Log.d("Test", "click button");
-                Log.d("Test", "list ddd"+map.toString());
-//                materialDesignFAM.setFocusable(true);
-//                materialDesignFAM.setFocusableInTouchMode(true);
-//                materialDesignFAM.requestFocus();
-//                Long personId = (Long)(map.get("id"));
-//                if(personId == -1){
-//                    materialDesignFAM.close(true);
-//                }else{
-//                    materialDesignFAM.close(true);
-//                    materialDesignFAM.open(true);
-//                }
-
-
-                break;
             default:
                 Log.d("Test", String.valueOf(id));
                 break;

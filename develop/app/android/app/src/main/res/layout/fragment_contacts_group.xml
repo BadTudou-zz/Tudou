@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <include
-            layout="@layout/app_bar_contacts"
+            layout="@layout/app_bar_contacts_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

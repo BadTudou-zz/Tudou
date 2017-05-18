@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -112,6 +113,15 @@ public class ContactsController {
         //String[] selectionArgs = {String.valueOf(contactId)};
         return Util.ContentResolverDelete(contentResolver, contactUri, null, null);
 
+    }
+
+    public void viewDetails(long contactId){
+        Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);// info.id联系人ID
+        Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        Map<Object , Object> map = new HashMap<Object, Object>();
+//                map.put("id", personId);
+        activity.getApplication().startActivity(intent);
     }
 
 }

@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.badtudou.controller.ContactsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.controller.Ca3logController;
 import com.badtudou.tudou.R;
@@ -49,6 +50,7 @@ public class HistoryListFragment extends Fragment {
     private String mParam2;
     private View view;
     private Ca3logController ca3LogController;
+    private ContactsController contactsController;
     private List<Map<String, String>> ca3list;
     private SimpleAdapter adapter;
     private ListView listView;
@@ -95,6 +97,7 @@ public class HistoryListFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_history_list, container, false);
         initViews();
         ca3LogController = new Ca3logController(getActivity());
+        contactsController = new ContactsController(getActivity());
         ca3list = ca3LogController.getCallsList();
         Log.d("Test", ca3list.toString());
         listView = (ListView)view.findViewById(R.id.call_list);
@@ -108,22 +111,7 @@ public class HistoryListFragment extends Fragment {
                 switch (id){
                     case R.id.txt_number:
                         String number = String.valueOf(data);
-                        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-                        String[] projection = null;
-                        String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-                        Map<String, String> itemList = new HashMap<>();
-                        String[] selectionArgs = {number};
-                        String sortOrder = null;
-                        itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                        itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
-                        Map<String, String> map = new HashMap<String, String>();
-                        try {
-                            map = Util.ContentResolverSearch(getActivity().getContentResolver(), uri, projection, itemList, selection, selectionArgs, sortOrder).get(0);
-                            Log.d("Test", map.toString());
-                            ((TextView) view).setText(map.get("name"));
-                            return true;
-                        } catch (IndexOutOfBoundsException arExc){
-                        }
+
                         break;
 
                     case R.id.txt_date:
@@ -201,7 +189,7 @@ public class HistoryListFragment extends Fragment {
 
     private void initViews() {
         ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style);
+        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style_group);
 
         button_add.setOnClickListener((FragmentViewClickListener)getActivity());
         button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());

@@ -11,14 +11,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <include
-            layout="@layout/app_bar_contacts"
+            layout="@layout/app_bar_contacts_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ListView
-                android:id="@+id/contents_list"
+                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/swipeRefreshLayout">-->
+
+                <!--<com.tubb.smrv.SwipeMenuListView-->
+                    <!--android:id="@+id/contents_list"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent" />-->
+
+            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+            <!--<ListView-->
+                <!--android:id="@+id/contents_list"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent" />-->
+            <include
+                layout="@layout/contacts_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
             <include

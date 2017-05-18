@@ -65,6 +65,17 @@ public class GroupController {
         values.put(ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE, ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE);
         Util.ContentResolverInsert(contentResolver, uri, values);
     }
+
+    public int removeMembership(int groupId, int personId){
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String where = ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID + " = ?"
+                + " AND " + ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = ?"
+                + " AND " + ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = ? ;";
+        String[] selectionArgs = {String.valueOf(personId), String.valueOf(groupId), ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE};
+
+        return Util.ContentResolverDelete(contentResolver, uri, where, selectionArgs);
+    }
+
     public Uri add(ContentValues values){
         Uri uri = ContactsContract.Groups.CONTENT_URI;
         return Util.ContentResolverInsert(contentResolver, uri, values);

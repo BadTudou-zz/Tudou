@@ -14,12 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <ImageButton
-                android:id="@+id/button_switch_contact_style"
+                android:id="@+id/button_switch_contact_style_list"
                 android:layout_width="15dp"
                 android:layout_marginLeft="10dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:background="@drawable/vector_drawable_list"/>
+                android:background="@drawable/vector_drawable_group"/>
             <TextView
                 android:id="@+id/text_group_or_contacts"
                 android:layout_weight="12"
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/title_contacts"
+                android:text="@string/title_group"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/black" />

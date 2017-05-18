@@ -1,7 +1,6 @@
 package com.badtudou.view.fragment;
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,21 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleExpandableListAdapter;
-import android.widget.TextView;
 
 import com.badtudou.controller.ContactsController;
 import com.badtudou.controller.GroupController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.tudou.R;
-import com.badtudou.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,14 +160,11 @@ public class ContactsGroupFragment extends Fragment {
 
     private void initViews(){
         ImageButton button_add = (ImageButton)view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style);
-        TextView textView_title = (TextView)view.findViewById(R.id.text_group_or_contacts);
+        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style_list);
 
         button_add.setOnClickListener((FragmentViewClickListener)getActivity());
-        button_switch_contact_style.setBackgroundResource(R.drawable.vector_drawable_group);
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
-        textView_title.setText(R.string.title_group);
     }
 
     /**

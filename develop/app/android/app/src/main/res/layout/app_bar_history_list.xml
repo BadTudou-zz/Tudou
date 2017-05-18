@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.badtudou.view.activity.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <ImageButton
+                android:id="@+id/button_switch_history_style_group"
+                android:layout_width="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/vector_drawable_list"/>
+            <TextView
+                android:id="@+id/text_group_or_history"
+                android:layout_weight="12"
+                android:textAlignment="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/title_history"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <ImageButton
+                android:id="@+id/button_add_contact"
+                android:layout_width="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/vector_drawable_plus"/>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+</android.support.design.widget.CoordinatorLayout>

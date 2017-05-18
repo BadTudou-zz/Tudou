@@ -24,6 +24,7 @@ public class SmsController{
 
         public void sendSms(String phone, String text) {
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + phone));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(Telephony.Sms.BODY, text);
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.SEND_SMS}, 1);
