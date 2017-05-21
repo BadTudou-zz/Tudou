@@ -109,19 +109,37 @@ public class ContactsController {
 
     public int deleteContacts(long contactId){
         Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-        //String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " LIKE ?";
-        //String[] selectionArgs = {String.valueOf(contactId)};
         return Util.ContentResolverDelete(contentResolver, contactUri, null, null);
 
     }
 
-    public void viewDetails(long contactId){
+    public void actionViewDetails(long contactId){
         Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);// info.id联系人ID
         Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        Map<Object , Object> map = new HashMap<Object, Object>();
-//                map.put("id", personId);
-        activity.getApplication().startActivity(intent);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.getApplication().startActivity(intent);
+        }
     }
+
+    public void actionNew(){
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.getApplication().startActivity(intent);
+        }
+    }
+
+    public void actionEdit(long contactId){
+        Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);// info.id联系人ID
+        Intent intent = new Intent(Intent.ACTION_EDIT, personUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.getApplication().startActivity(intent);
+        }
+    }
+
+
 
 }

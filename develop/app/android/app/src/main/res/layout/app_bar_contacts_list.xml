@@ -32,13 +32,13 @@
                 android:textStyle="bold"
                 android:textColor="@color/black" />
             <ImageButton
-                android:id="@+id/button_add_contact"
+                android:id="@+id/button_search"
                 android:layout_width="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="15dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:background="@drawable/vector_drawable_plus"/>
+                android:background="@drawable/ic_search_black_24dp"/>
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.CoordinatorLayout>

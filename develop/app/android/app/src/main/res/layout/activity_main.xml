@@ -38,6 +38,7 @@
             android:id="@+id/navigationItemBar_Contacts"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
             android:background="@color/colorActiviBarOff"
             android:layout_weight="1"/>
 
@@ -45,6 +46,7 @@
             android:id="@+id/navigationItemBar_Call"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
             android:background="@color/colorActiviBarOff"
             android:layout_weight="1"/>
 
