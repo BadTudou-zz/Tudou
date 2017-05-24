@@ -21,10 +21,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -45,6 +47,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import io.github.brightyoyo.IndexBar;
 
 
 /**
@@ -72,6 +77,7 @@ public class ContactsListFragment extends Fragment {
     private SimpleAdapter adapter;
     private View view, dialogView;
     private SwipeMenuListView listView;
+    private IndexBar indexBar;
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
 
@@ -119,14 +125,6 @@ public class ContactsListFragment extends Fragment {
         builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView);
         alertDialog = builder.create();
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Toast.makeText(getActivity(), "Refresh success", Toast.LENGTH_LONG).show();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
@@ -145,12 +143,10 @@ public class ContactsListFragment extends Fragment {
         floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!listView.isSelected()){
-                    contactsController.actionNew();
-                    //Toast.makeText(getActivity(), "没有选择展开菜单", Toast.LENGTH_SHORT).show();
-                }
-                if(floatingActionMenu.isOpened()){
+                if((listView.isSelected() || floatingActionMenu.isOpened())){
                     floatingActionMenu.close(true);
+                }else{
+                    contactsController.actionNew();
                 }
 
             }
@@ -168,7 +164,6 @@ public class ContactsListFragment extends Fragment {
                 Log.d("Test", map.toString());
                 switch (id){
                     case R.id.material_design_floating_action_menu_call:
-                        Log.d("Test", map.get("number"));
                         callController.callPhone(map.get("number"));
                         break;
                     case R.id.material_design_floating_action_menu_sms:
@@ -177,10 +172,9 @@ public class ContactsListFragment extends Fragment {
                     case R.id.material_design_floating_action_menu_share:
                         break;
                     case R.id.material_design_floating_action_menu_details:
-                        contactsController.actionViewDetails(Long.parseLong(map.get("id")));
+                        contactsController.actionView(Long.parseLong(map.get("id")));
                         break;
                     default:
-                        Log.d("Test", String.valueOf(id));
                         break;
                 }
                 activiteContactsIndex = -1;
@@ -241,67 +235,74 @@ public class ContactsListFragment extends Fragment {
         button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         listView = (SwipeMenuListView) view.findViewById(R.id.contents_list);
+        indexBar = (IndexBar)view.findViewById(R.id.index_bar);
+        indexBar.setSections(alphabets());
+        indexBar.setIndexBarFilter(new IndexBar.IIndexBarFilter() {
+            /**
+             /* @param sideIndexY  滑动IndexBar的Y轴坐标
+             * @param position    字母的索引位置
+             * @param previewText 手指触摸的字母
+             */
+            @Override
+            public void filterList(float sideIndex, int position, 	String previewText) {
+//                Integer selection = mSections.get(previewText);
+//                if (selection != null) {
+//                    mPreviewText.setVisibility(View.VISIBLE);
+//                    mPreviewText.setText(previewText);
+//                    mListView.setSelection(selection);
+//                } else {
+//                    mPreviewText.setVisibility(View.GONE);
+//                }
+                Log.d("Test", String.valueOf(sideIndex)+previewText);
+               // Toast.makeText(getActivity(), String.valueOf(sideIndex)+previewText, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                Toast.makeText(getActivity(), "Refresh success", Toast.LENGTH_LONG).show();
+//                swipeRefreshLayout.setRefreshing(false);
+//            }
+//        });
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
             @Override
             public void create(SwipeMenu menu) {
-                // create "call" item
-                SwipeMenuItem callItem = new SwipeMenuItem(getContext());
-                callItem.setBackground(R.color.colorPrimary);
-                callItem.setWidth(180);
-                callItem.setIcon(R.drawable.ic_call_black_24dp);
-                callItem.setId(SWIP_MENU_ITEM_CALL);
-                menu.addMenuItem(callItem);
+                List<Map<String, Integer>> icon2id = new ArrayList<>();
+                icon2id.add(new HashMap<String, Integer>(){{put("icon", R.drawable.ic_call_black_24dp); put("id", SWIP_MENU_ITEM_CALL);}});
+                icon2id.add(new HashMap<String, Integer>(){{put("icon", R.drawable.ic_sms_black_24dp); put("id",SWIP_MENU_ITEM_SMS);}});
+                icon2id.add(new HashMap<String, Integer>(){{put("icon", R.drawable.ic_star_black_24dp); put("id", SWIP_MENU_ITEM_STAR);}});
+                icon2id.add(new HashMap<String, Integer>(){{put("icon", R.drawable.ic_edit_black_24dp); put("id", SWIP_MENU_ITEM_EDIT);}});
+                icon2id.add(new HashMap<String, Integer>(){{put("icon", R.drawable.ic_delete_forever_black_24dp); put("id", SWIP_MENU_ITEM_DELETE);}});
 
-                // create "sms" item
-                SwipeMenuItem smsItem = new SwipeMenuItem(getContext());
-                smsItem.setBackground(R.color.colorPrimary);
-                smsItem.setWidth(180);
-                smsItem.setIcon(R.drawable.ic_sms_black_24dp);
-                smsItem.setId(SWIP_MENU_ITEM_SMS);
-                menu.addMenuItem(smsItem);
-
-                SwipeMenuItem startItem = new SwipeMenuItem(getContext());
-                startItem.setBackground(R.color.colorPrimary);
-                startItem.setWidth(180);
-                startItem.setIcon(R.drawable.ic_star_black_24dp);
-                startItem.setId(SWIP_MENU_ITEM_STAR);
-                menu.addMenuItem(startItem);
-
-                // create "edit" item
-                SwipeMenuItem editItem = new SwipeMenuItem(getContext());
-                editItem.setBackground(R.color.colorPrimary);
-                editItem.setWidth(180);
-                editItem.setIcon(R.drawable.ic_edit_black_24dp);
-                editItem.setId(SWIP_MENU_ITEM_EDIT);
-                menu.addMenuItem(editItem);
-
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(getContext());
-                deleteItem.setBackground(R.color.colorPrimary);
-                deleteItem.setWidth(180);
-                deleteItem.setIcon(R.drawable.ic_delete_forever_black_24dp);
-                deleteItem.setId(SWIP_MENU_ITEM_DELETE);
-                menu.addMenuItem(deleteItem);
-
-
+                int swipeMenuItem_width = 180;
+                int swipeMenuItem_color =  R.color.colorPrimary;
+                for (Map<String, Integer> swipeMenuItemMap: icon2id) {
+                    SwipeMenuItem swipeMenuItem = new SwipeMenuItem(getContext());
+                    swipeMenuItem.setBackground(swipeMenuItem_color);
+                    swipeMenuItem.setWidth(swipeMenuItem_width);
+                    swipeMenuItem.setIcon(swipeMenuItemMap.get("icon"));
+                    swipeMenuItem.setId(swipeMenuItemMap.get("id"));
+                    menu.addMenuItem(swipeMenuItem);
+                }
             }
         };
+
         listView.setMenuCreator(creator);
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                Log.d("Test", String.valueOf(position)+":"+String.valueOf(index));
                 activiteContactsIndex = position;
                 Map<String,String> map = new HashMap<>();
                 map = contactsList.get(position);
-                Log.d("Test", map.toString());
                 switch (menu.getMenuItem(index).getId()){
                     case SWIP_MENU_ITEM_CALL:
-                        Log.d("Test", "call");
                         callController.callPhone(map.get("number"));
                         break;
                     case SWIP_MENU_ITEM_SMS:
@@ -356,7 +357,7 @@ public class ContactsListFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if(view instanceof ImageView){
+                if(view instanceof CircleImageView){
                     String idstring = String.valueOf(data);
                     Long id = Long.valueOf(idstring);
                     InputStream inputStream = contactsController.openPhoto(Long.valueOf(id));
@@ -364,10 +365,9 @@ public class ContactsListFragment extends Fragment {
                     if(inputStream != null){
                         bmp = BitmapFactory.decodeStream(inputStream);
                     }else{
-                        // ((ImageView) view).setBackgroundResource(R.drawable.vector_drawable_about);
-                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_drawable_photo_default);
+                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_face_black_24dp);
                     }
-                    ((ImageView) view).setImageBitmap(bmp);
+                    ((CircleImageView) view).setImageBitmap(bmp);
 
                     return  true;
                 }
@@ -392,6 +392,15 @@ public class ContactsListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private String[] alphabets() {
+        final int length = 26;
+        final String[] alphabets = new String[length];
+        char c = 'A';
+        for (int i = 0; i < length; i++) {
+            alphabets[i] = String.valueOf(c++);
+        }
+        return alphabets;
     }
 
 }

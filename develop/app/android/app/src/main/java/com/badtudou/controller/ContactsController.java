@@ -113,7 +113,7 @@ public class ContactsController {
 
     }
 
-    public void actionViewDetails(long contactId){
+    public void actionView(long contactId){
         Uri personUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);// info.id联系人ID
         Intent intent = new Intent(new Intent(Intent.ACTION_VIEW, personUri));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
