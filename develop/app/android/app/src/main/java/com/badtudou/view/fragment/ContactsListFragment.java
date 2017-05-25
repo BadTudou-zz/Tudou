@@ -1,5 +1,6 @@
 package com.badtudou.view.fragment;
 
+import com.badtudou.model.ContactsComparator;
 import com.pinyinsearch.model.*;
 import com.pinyinsearch.util.*;
 import android.app.AlertDialog;
@@ -50,6 +51,7 @@ import net.sourceforge.pinyin4j.PinyinHelper;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -371,6 +373,9 @@ public class ContactsListFragment extends Fragment {
         smsController = new SmsController(getActivity());
         contactsList = contactsController.getContactsList();
 
+        ContactsComparator comp = new ContactsComparator();
+        Collections.sort(contactsList, comp);
+
         hanyu2pinyinMap = new HashMap<>();
         for (int i =0; i < contactsList.size(); i++){
             // 获取所有拼音
@@ -405,13 +410,6 @@ public class ContactsListFragment extends Fragment {
         for (Map.Entry<String, List<Map<Integer,List<String>>>> entry: hanyu2pinyinMap.entrySet()) {
             Log.d("Test", entry.getKey().substring(0,1));
         }
-
-//        for (int i = 0; i < length; i++) {
-//            String alphabet = dummyData.get(i).substring(0, 1);
-//            if (!mSections.containsKey(alphabet)) {
-//                mSections.put(alphabet, i);
-//            }
-//        }
 
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
                 new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
