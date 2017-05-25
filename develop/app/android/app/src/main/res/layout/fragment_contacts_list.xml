@@ -17,21 +17,6 @@
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:id="@+id/swipeRefreshLayout">-->
-
-                <!--<com.tubb.smrv.SwipeMenuListView-->
-                    <!--android:id="@+id/contents_list"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent" />-->
-
-            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-            <!--<ListView-->
-                <!--android:id="@+id/contents_list"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent" />-->
             <include
                 layout="@layout/contacts_list_view"
                 android:layout_width="match_parent"
@@ -40,16 +25,6 @@
                 layout="@layout/floating_action_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-            <!--<android.support.design.widget.FloatingActionButton-->
-                <!--android:id="@+id/fab"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom|right"-->
-                <!--android:layout_margin="16dp"-->
-                <!--srcCompat="@drawable/vector_drawable_plus"-->
-                <!--fab:fab_colorNormal="@color/colorPrimary"-->
-                <!--fab:fab_colorPressed="@color/colorAccent"-->
-                <!--fab:fab_colorRipple="@color/colorBackground" />-->
         </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
 

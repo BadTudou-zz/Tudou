@@ -1,5 +1,7 @@
 package com.badtudou.view.fragment;
 
+import com.pinyinsearch.model.*;
+import com.pinyinsearch.util.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.badtudou.controller.CallController;
@@ -42,11 +46,14 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.brightyoyo.IndexBar;
@@ -78,6 +85,7 @@ public class ContactsListFragment extends Fragment {
     private View view, dialogView;
     private SwipeMenuListView listView;
     private IndexBar indexBar;
+    private Map<String, Integer> mSections = new HashMap<String, Integer>();
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
 
@@ -85,6 +93,7 @@ public class ContactsListFragment extends Fragment {
     private View.OnClickListener onClickListener;
     private List<Integer> floatingActionButtonIds;
     private FloatingActionMenu floatingActionMenu;
+    private Map<String, List<Map<Integer,List<String>>>> hanyu2pinyinMap;
     private int activiteContactsIndex = -1;
 
     private static final int SWIP_MENU_ITEM_CALL = 1;
@@ -245,14 +254,25 @@ public class ContactsListFragment extends Fragment {
              */
             @Override
             public void filterList(float sideIndex, int position, 	String previewText) {
-//                Integer selection = mSections.get(previewText);
-//                if (selection != null) {
-//                    mPreviewText.setVisibility(View.VISIBLE);
-//                    mPreviewText.setText(previewText);
-//                    mListView.setSelection(selection);
-//                } else {
-//                    mPreviewText.setVisibility(View.GONE);
-//                }
+                Integer selection = mSections.get(previewText);
+                if(previewText == null){
+                    return;
+                }
+                for (Map.Entry<String, List<Map<Integer,List<String>>>> entry: hanyu2pinyinMap.entrySet()) {
+                    //Log.d("Test", entry.getKey().substring(0,1));
+                    String zimu = entry.getKey().substring(0,1).substring(0,1);
+                    if(zimu.equals(previewText.toLowerCase())){
+                        for (Map<Integer, List<String>> keyName : entry.getValue()) {
+                            Object[] indexs = keyName.keySet().toArray();
+                            Log.d("Test", String.valueOf(indexs[0]));
+                            listView.setSelection((Integer)indexs[0]);
+                            return;
+
+                        }
+                        Log.d("Test", entry.getValue().get(0).toString());
+                        break;
+                    }
+                }
                 Log.d("Test", String.valueOf(sideIndex)+previewText);
                // Toast.makeText(getActivity(), String.valueOf(sideIndex)+previewText, Toast.LENGTH_SHORT).show();
             }
@@ -351,6 +371,48 @@ public class ContactsListFragment extends Fragment {
         smsController = new SmsController(getActivity());
         contactsList = contactsController.getContactsList();
 
+        hanyu2pinyinMap = new HashMap<>();
+        for (int i =0; i < contactsList.size(); i++){
+            // 获取所有拼音
+            Map<String, String> contactsMap = contactsList.get(i);
+            String name = contactsMap.get("name");
+            List<String> pin = new ArrayList<>();
+            for(int j =0; j < name.length(); j++){
+                String[] pinyin = PinyinHelper.toHanyuPinyinStringArray(name.charAt(j));
+                if(pinyin != null){
+                    pin.add(pinyin.toString());
+                }else {
+                    pin.add("");
+                }
+            }
+            String[] p = PinyinHelper.toHanyuPinyinStringArray(name.charAt(0));
+            if(p != null){
+                Map<Integer, List<String>> con = new HashMap<>();
+                con.put(i, pin);
+                if(hanyu2pinyinMap.get(p[0]) == null){
+                    List< Map<Integer, List<String>>> l = new ArrayList<>();
+                    l.add(con);
+                    hanyu2pinyinMap.put(p[0], l);
+                }else{
+                    Map<Integer, List<String>> con2 = new HashMap<>();
+                    con2.put(i, pin);
+                    hanyu2pinyinMap.get(p[0]).add(con2);
+                }
+
+            }
+        }
+
+        for (Map.Entry<String, List<Map<Integer,List<String>>>> entry: hanyu2pinyinMap.entrySet()) {
+            Log.d("Test", entry.getKey().substring(0,1));
+        }
+
+//        for (int i = 0; i < length; i++) {
+//            String alphabet = dummyData.get(i).substring(0, 1);
+//            if (!mSections.containsKey(alphabet)) {
+//                mSections.put(alphabet, i);
+//            }
+//        }
+
         adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
                 new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
@@ -394,10 +456,11 @@ public class ContactsListFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
     private String[] alphabets() {
-        final int length = 26;
+        final int length = 27;
         final String[] alphabets = new String[length];
+        alphabets[0] = "#";
         char c = 'A';
-        for (int i = 0; i < length; i++) {
+        for (int i = 1; i < length; i++) {
             alphabets[i] = String.valueOf(c++);
         }
         return alphabets;
