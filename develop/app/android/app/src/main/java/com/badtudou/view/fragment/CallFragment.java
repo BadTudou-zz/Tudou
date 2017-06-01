@@ -181,7 +181,7 @@ public class CallFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        listView = (ListView)view.findViewById(R.id.contents_match_list);
+        listView = (ListView)view.findViewById(R.id.contents_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

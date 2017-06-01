@@ -16,11 +16,18 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,10 +99,12 @@ public class ContactsListFragment extends Fragment {
     private AlertDialog alertDialog;
 
     private FragmentViewClickListener fragmentViewClickListener;
+    private OnFragmentInteractionListener mlistener;
     private View.OnClickListener onClickListener;
     private List<Integer> floatingActionButtonIds;
     private FloatingActionMenu floatingActionMenu;
     private Map<String, List<Map<Integer,List<String>>>> hanyu2pinyinMap;
+    private SearchView searchView;
     private int activiteContactsIndex = -1;
 
     private static final int SWIP_MENU_ITEM_CALL = 1;
@@ -131,14 +140,15 @@ public class ContactsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the expandable_selector for this fragment
+        setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.fragment_contacts_list, container, false);
         dialogView = inflater.inflate(R.layout.dialog_alert, container, false);
         builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView);
         alertDialog = builder.create();
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+//        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         initDates();
         initViews();
         return view;
@@ -210,14 +220,54 @@ public class ContactsListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_contacts_list_menu, menu);
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                contactsList.clear();
+                contactsList.addAll(contactsController.getContactsByName(newText));
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_contacts_group:
+                fragmentViewClickListener.viewIdClick(id, null);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onAttach(Context context) {
         fragmentViewClickListener = (FragmentViewClickListener)context;
+        mlistener = (OnFragmentInteractionListener)context;
         super.onAttach(context);
     }
 
     private void initViews(){
-        ImageButton button_search = (ImageButton)view.findViewById(R.id.button_search);
-        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style_group);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setHomeButtonEnabled(true);
+//        actionBar.setHomeAsUpIndicator(R.drawable.ic_sms_black_24dp);
+        actionBar.setIcon(R.drawable.logo_du_big);
+//        SearchView searchView = (SearchView) view.findViewById(R.id.searchview);
+//        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style_group);
         Button button_contacts_cancel = (Button)dialogView.findViewById(R.id.button_contacts_cancel);
         button_contacts_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,9 +291,21 @@ public class ContactsListFragment extends Fragment {
             }
         });
 
-
-        button_search.setOnClickListener((FragmentViewClickListener)getActivity());
-        button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
+//        searchView.setIconified(true);
+//        searchView.setIconifiedByDefault(false);
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                Log.d("Test", newText);
+//                return false;
+//            }
+//        });
+       // button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
         listView = (SwipeMenuListView) view.findViewById(R.id.contents_list);
         indexBar = (IndexBar)view.findViewById(R.id.index_bar);
@@ -361,6 +423,7 @@ public class ContactsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 activiteContactsIndex = position;
+                Log.d("Test", contactsList.get(position).toString());
                 floatingActionMenu.open(true);
 
             }

@@ -23,6 +23,7 @@ import java.util.Map;
  */
 public class ContactsController {
 
+    static public final int REQUEST_SELECT_CONTACT = 1;
     private ContentResolver contentResolver = null;
     private Activity activity;
     public ContactsController(Activity activity) {
@@ -140,6 +141,13 @@ public class ContactsController {
         }
     }
 
+    public void selectContact() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.startActivityForResult(intent, REQUEST_SELECT_CONTACT);
+        }
+    }
 
 
 }

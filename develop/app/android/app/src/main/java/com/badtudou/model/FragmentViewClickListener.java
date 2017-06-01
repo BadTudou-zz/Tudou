@@ -9,5 +9,5 @@ import java.util.Map;
  */
 
 public interface FragmentViewClickListener extends View.OnClickListener{
-    public void viewClick(View v, Map map);
+    public void viewIdClick(int id, Map map);
 }

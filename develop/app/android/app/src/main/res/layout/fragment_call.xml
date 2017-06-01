@@ -10,10 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/Row0">
-        <include
-            layout="@layout/app_bar_call"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
         <LinearLayout
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
@@ -53,11 +49,15 @@
         android:layout_below="@id/Row0"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="200dp">
-        <ListView
-            android:id="@+id/contents_match_list"
+        android:layout_height="320dp">
+        <include
+            layout="@layout/contacts_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <!--<ListView-->
+            <!--android:id="@+id/contents_match_list"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
     </LinearLayout>
 
 

@@ -9,17 +9,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/app_bar_contacts_group"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+            <include
+                layout="@layout/contacts_group_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <include
+                layout="@layout/floating_action_menu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.design.widget.CoordinatorLayout>
+        <!--<include-->
+            <!--layout="@layout/app_bar_contacts_group"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
 
-        <ExpandableListView
-            android:id="@+id/contents_group"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:groupIndicator="@null">
-        </ExpandableListView>
+
             <!--<ListView-->
                 <!--android:id="@+id/contents_group"-->
                 <!--android:layout_width="match_parent"-->

@@ -1,5 +1,7 @@
 package com.badtudou.view.activity;
 
+import android.content.ContentUris;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,12 +14,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.badtudou.controller.ContactsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.view.fragment.CallFragment;
 import com.badtudou.view.fragment.ContactsGroupFragment;
@@ -185,6 +190,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        viewIdClick(id, null);
+
+    }
+
+    @Override
+    public void viewIdClick(int id, Map map) {
         switch (id){
             case R.id.button_switch_history_style_list:
                 showFragment(fragmentsMap.get(FRAGMENT_HISTORY_LIST));
@@ -193,28 +204,27 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.button_switch_history_style_group:
                 showFragment(fragmentsMap.get(FRAGMENT_HISTORY_GROUP));
                 break;
-
-            case R.id.button_switch_contact_style_list:
-                showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_LIST));
-                break;
-
-            case R.id.button_switch_contact_style_group:
+            
+            case R.id.action_contacts_group:
                 showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_GROUP));
                 break;
 
-
-        }
-    }
-
-    @Override
-    public void viewClick(View v, Map map) {
-        int id = v.getId();
-        switch (id) {
-            default:
-                Log.d("Test", String.valueOf(id));
+            case R.id.action_contacts_list:
+                showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_LIST));
                 break;
 
+            default:
+                break;
         }
     }
+
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == ContactsController.REQUEST_SELECT_CONTACT && resultCode == RESULT_OK) {
+//            Uri contactUri = data.getData();
+//            final long id = ContentUris.parseId(data.getData());
+//            Log.d("Test", "onActivityResult"+String.valueOf(id));
+//            // Do something with the selected contact at contactUri
+//        }
+//    }
 
 }
