@@ -89,17 +89,17 @@ public class HistoryGroupFragment extends Fragment {
         listView.setAdapter(adapter);
 
         initViews();
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+//        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         return view;
     }
 
     private void initViews() {
-        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style_list);
-
-        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
-        button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
+//        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
+//        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style_list);
+//
+//        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+//        button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
 
     }
 

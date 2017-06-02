@@ -36,7 +36,7 @@ public class Ca3logController {
         put(CallLog.Calls.OUTGOING_TYPE, R.drawable.outgoing_type);
 
         // TODO
-        put(CallLog.Calls.MISSED_TYPE, R.drawable.outgoing_type);
+        put(CallLog.Calls.MISSED_TYPE, R.drawable.ic_call_missed_outgoing_black_24dp);
         put(CallLog.Calls.VOICEMAIL_TYPE, R.drawable.outgoing_type);
         put(CallLog.Calls.REJECTED_TYPE, R.drawable.outgoing_type);
         put(CallLog.Calls.BLOCKED_TYPE, R.drawable.outgoing_type);

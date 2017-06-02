@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -93,6 +96,7 @@ public class HistoryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the expandable_selector for this fragment
         view =  inflater.inflate(R.layout.fragment_history_list, container, false);
         initViews();
@@ -128,7 +132,11 @@ public class HistoryListFragment extends Fragment {
                         String typeString = String.valueOf(data);
                         Integer type = Integer.valueOf(typeString);
                         Log.d("Test", "type:"+typeString);
-                        ((ImageView) view).setBackgroundResource(Ca3logController.type2Resources.get(type));
+                        if(Ca3logController.type2Resources.get(type) == null){
+                            ((ImageView) view).setBackgroundResource(R.drawable.outgoing_type);
+                        }else{
+                            ((ImageView) view).setBackgroundResource(Ca3logController.type2Resources.get(type));
+                        }
                         return true;
                 }
 
@@ -165,6 +173,12 @@ public class HistoryListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_history_list_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -186,11 +200,11 @@ public class HistoryListFragment extends Fragment {
     }
 
     private void initViews() {
-        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
-        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style_group);
-
-        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
-        button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
+//        ImageButton button_add = (ImageButton) view.findViewById(R.id.button_add_contact);
+//        ImageButton button_switch_history_style = (ImageButton) view.findViewById(R.id.button_switch_history_style_group);
+//
+//        button_add.setOnClickListener((FragmentViewClickListener)getActivity());
+//        button_switch_history_style.setOnClickListener((FragmentViewClickListener)getActivity());
     }
 
 }

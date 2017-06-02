@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.button_switch_history_style_group:
                 showFragment(fragmentsMap.get(FRAGMENT_HISTORY_GROUP));
                 break;
-            
+
             case R.id.action_contacts_group:
                 showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_GROUP));
                 break;
