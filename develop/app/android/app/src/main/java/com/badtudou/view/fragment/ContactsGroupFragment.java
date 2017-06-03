@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleExpandableListAdapter;
 
@@ -128,7 +124,7 @@ public class ContactsGroupFragment extends Fragment {
         adapter = new SimpleExpandableListAdapter(
                 view.getContext(),
                 groupList,
-                R.layout.group_list_item,
+                R.layout.contacts_group_item,
                 new String[]{"title", "count"},
                 new int[]{R.id.txt_group, R.id.txt_group_memberSize},
                 contactsList,

@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 
+import com.badtudou.controller.ContactsController;
 import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.controller.Ca3logController;
 import com.badtudou.tudou.R;
@@ -40,6 +43,7 @@ import java.util.Map;
 
 public class HistoryGroupFragment extends Fragment {
     private Ca3logController ca3LogController;
+    private ContactsController contactsController;
     private List<Map<String, String>> ca3list;
     private List<Map<String, String>> group;
     private Map<String, List<Map<String, String>> > ca3listGroup;
@@ -53,10 +57,12 @@ public class HistoryGroupFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.fragment_history_group, container, false);
         listView = (ExpandableListView)view.findViewById(R.id.history_group);
         //listView.setGroupIndicator(null);
         ca3LogController = new Ca3logController(getActivity());
+        contactsController = new ContactsController(getActivity());
         ca3list = new ArrayList<>();
         groupList = new ArrayList<>();
         group = new ArrayList<>();
@@ -143,7 +149,15 @@ public class HistoryGroupFragment extends Fragment {
             String timeString = map.get("date");
             Long timestamp = Long.valueOf(timeString);
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter2 = new SimpleDateFormat("HH:mm:ss");
             String date = formatter.format(timestamp);
+            map.put("date", formatter2.format(timestamp));
+            String number = map.get("number");
+            List<Map<String,String>> conList = contactsController.getContactsByNumber(number);
+            if(conList.size() == 1){
+                map.put("number", conList.get(0).get("name"));
+            }
+
             Log.d("Test", date);
 
             if (ca3listGroup.get(date) == null){
@@ -170,4 +184,9 @@ public class HistoryGroupFragment extends Fragment {
         Log.d("Test", mapGroup.toString());
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_history_group_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }

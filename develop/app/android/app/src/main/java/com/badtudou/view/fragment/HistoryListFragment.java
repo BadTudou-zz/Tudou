@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -115,8 +116,16 @@ public class HistoryListFragment extends Fragment {
                 switch (id){
                     case R.id.txt_number:
                         String number = String.valueOf(data);
+                        List<Map<String,String>> conList = contactsController.getContactsByNumber(number);
+                        if(conList.size() == 1){
+                            ((TextView) view).setText(conList.get(0).get("name"));
+                        }else
+                        {
+                            ((TextView) view).setText(number);
+                        }
+                        return true;
 
-                        break;
+
 
                     case R.id.txt_date:
                         String timeString = String.valueOf(data);
@@ -176,6 +185,19 @@ public class HistoryListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_history_list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_history_group:
+                fragmentViewClickListener.viewIdClick(id, null);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
