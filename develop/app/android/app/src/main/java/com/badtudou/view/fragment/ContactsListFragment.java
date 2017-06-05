@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -172,7 +173,6 @@ public class ContactsListFragment extends Fragment {
 
             }
         });
-
         onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -410,6 +410,16 @@ public class ContactsListFragment extends Fragment {
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.d("Test", "touch");
+                if (activiteContactsIndex != -1){
+                    View view = getViewByPosition(activiteContactsIndex, listView);
+                    int color = ContextCompat.getColor(getContext(), R.color.colorActiviBarOff);
+                    ((TextView)view.findViewById(R.id.txt_name)).setTextColor(Color.GRAY);
+                    ((TextView)view.findViewById(R.id.txt_phone)).setTextColor(Color.GRAY);
+                    CircleImageView circleImageView = (CircleImageView)view.findViewById(R.id.img_head);
+                    circleImageView.setBorderColor(color);
+                }
+
                 activiteContactsIndex = -1;
                 if(!listView.isSelected())
                     floatingActionMenu.close(true);
@@ -420,10 +430,16 @@ public class ContactsListFragment extends Fragment {
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 activiteContactsIndex = position;
-                Log.d("Test", contactsList.get(position).toString());
+                int color = ContextCompat.getColor(getContext(), R.color.colorActiviBarOn);
+                ((TextView)view.findViewById(R.id.txt_name)).setTextColor(color);
+                ((TextView)view.findViewById(R.id.txt_phone)).setTextColor(color);
+//                Log.d("Test", contactsList.get(position).toString());
+                CircleImageView circleImageView = (CircleImageView)view.findViewById(R.id.img_head);
+                circleImageView.setBorderColor(color);
                 floatingActionMenu.open(true);
 
             }
@@ -525,6 +541,18 @@ public class ContactsListFragment extends Fragment {
             alphabets[i] = String.valueOf(c++);
         }
         return alphabets;
+    }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
 }

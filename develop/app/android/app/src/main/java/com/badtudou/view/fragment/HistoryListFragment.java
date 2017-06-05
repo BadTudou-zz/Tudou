@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -28,6 +29,7 @@ import com.badtudou.model.FragmentViewClickListener;
 import com.badtudou.controller.Ca3logController;
 import com.badtudou.tudou.R;
 import com.badtudou.util.Util;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -57,7 +59,8 @@ public class HistoryListFragment extends Fragment {
     private ContactsController contactsController;
     private List<Map<String, String>> ca3list;
     private SimpleAdapter adapter;
-    private ListView listView;
+    private SwipeMenuListView listView;
+    private int activitedHistoryIndex = -1;
 
     private OnFragmentInteractionListener mListener;
     private FragmentViewClickListener fragmentViewClickListener;
@@ -105,7 +108,31 @@ public class HistoryListFragment extends Fragment {
         contactsController = new ContactsController(getActivity());
         ca3list = ca3LogController.getCallsList();
         Log.d("Test", ca3list.toString());
-        listView = (ListView)view.findViewById(R.id.call_list);
+        listView = (SwipeMenuListView)view.findViewById(R.id.call_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                activitedHistoryIndex = position;
+            }
+        });
+        listView.setSwipeDirection(SwipeMenuListView.DIRECTION_RIGHT);
+        listView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
+            @Override
+            public void onSwipeStart(int position) {
+
+            }
+
+            @Override
+            public void onSwipeEnd(int position) {
+                Log.d("Test", String.valueOf(position));
+                    Long id  = Long.valueOf(ca3list.get(position).get("id"));
+                    Log.d("Test", "delete history");
+                    ca3LogController.removeLog(id);
+                    ca3list.remove(position);
+                    adapter.notifyDataSetChanged();
+
+            }
+        });
         adapter = new SimpleAdapter(view.getContext(), ca3list, R.layout.history_list_item,
                 new String[]{"number", "date", "type"}, new int[]{R.id.txt_number, R.id.txt_date, R.id.img_type});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
@@ -152,6 +179,7 @@ public class HistoryListFragment extends Fragment {
                 return false;
             }
         });
+
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

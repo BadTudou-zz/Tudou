@@ -205,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements
                 showFragment(fragmentsMap.get(FRAGMENT_HISTORY_GROUP));
                 break;
 
+            case R.id.action_history_list:
+                showFragment(fragmentsMap.get(FRAGMENT_HISTORY_LIST));
+                break;
+
             case R.id.action_contacts_group:
                 showFragment(fragmentsMap.get(FRAGMENT_CONTACTS_GROUP));
                 break;

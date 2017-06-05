@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
@@ -185,8 +186,30 @@ public class HistoryGroupFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentViewClickListener){
+            Log.d("Test", "实现接口");
+            fragmentViewClickListener = (FragmentViewClickListener) context;
+
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_history_group_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_history_list:
+                fragmentViewClickListener.viewIdClick(id, null);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -102,24 +102,8 @@ public class ContactsGroupFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_contacts_group, container, false);
         listView = (ExpandableListView)view.findViewById(R.id.contents_group);
         //test
-        groupController = new GroupController(getActivity());
-        contactsController = new ContactsController(getActivity());
-        groupList = groupController.getGroupsList();
-        contactsList = new ArrayList<>();
-        for(Map<String, String>  map : groupList){
-            List<Map<String, String>> idList;
-            List<Map<String, String>> contacts = new ArrayList<>();
-            String idString = map.get("id");
-            Long id = Long.valueOf(idString);
-            idList = groupController.getMembership(id);
-            for(Map<String, String> mapId : idList){
-                String contactsIdString = mapId.get("id");
-                Long contactsId= Long.valueOf(contactsIdString);
-                mapId.put("number", contactsController.getContactsById(contactsId).get("number"));
-            }
-            contactsList.add(idList);
-        }
 
+        initDate();
 
         adapter = new SimpleExpandableListAdapter(
                 view.getContext(),
@@ -190,6 +174,26 @@ public class ContactsGroupFragment extends Fragment {
 
     private void initViews(){
 
+    }
+
+    private void initDate(){
+        groupController = new GroupController(getActivity());
+        contactsController = new ContactsController(getActivity());
+        groupList = groupController.getGroupsList();
+        contactsList = new ArrayList<>();
+        for(Map<String, String>  map : groupList){
+            List<Map<String, String>> idList;
+            List<Map<String, String>> contacts = new ArrayList<>();
+            String idString = map.get("id");
+            Long id = Long.valueOf(idString);
+            idList = groupController.getMembership(id);
+            for(Map<String, String> mapId : idList){
+                String contactsIdString = mapId.get("id");
+                Long contactsId= Long.valueOf(contactsIdString);
+                mapId.put("number", contactsController.getContactsById(contactsId).get("number"));
+            }
+            contactsList.add(idList);
+        }
     }
 
     @Override

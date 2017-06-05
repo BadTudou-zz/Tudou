@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 
 import com.badtudou.tudou.R;
@@ -29,6 +30,7 @@ public class Ca3logController {
         this.activity = activity;
         contentResolver = activity.getContentResolver();
         Util.PermissionRequire(activity, Manifest.permission.READ_CALL_LOG);
+        Util.PermissionRequire(activity, Manifest.permission.WRITE_CALL_LOG);
     }
 
     static final public Map<Integer, Integer> type2Resources = new HashMap<Integer , Integer>(){{
@@ -52,12 +54,21 @@ public class Ca3logController {
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = null;
         String sortOrder = null;
+        itemList.put("id", CallLog.Calls._ID);
         itemList.put("number", CallLog.Calls.NUMBER);
         itemList.put("duration", CallLog.Calls.DURATION);
         itemList.put("date", CallLog.Calls.DATE);
         itemList.put("type", CallLog.Calls.TYPE);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
 
+    }
+
+    public int removeLog(long id){
+        Uri uri = CallLog.Calls.CONTENT_URI;
+        String where = CallLog.Calls._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return Util.ContentResolverDelete(contentResolver, uri, where, selectionArgs);
     }
 
 }
