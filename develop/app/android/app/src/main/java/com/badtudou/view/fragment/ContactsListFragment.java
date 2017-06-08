@@ -1,10 +1,14 @@
 package com.badtudou.view.fragment;
 
 import com.badtudou.model.ContactsComparator;
+import com.badtudou.util.Util;
 import com.pinyinsearch.model.*;
 import com.pinyinsearch.util.*;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,12 +16,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -77,7 +84,7 @@ import io.github.brightyoyo.IndexBar;
  * Use the {@link ContactsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ContactsListFragment extends Fragment {
+public class ContactsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -105,7 +112,6 @@ public class ContactsListFragment extends Fragment {
     private List<Integer> floatingActionButtonIds;
     private FloatingActionMenu floatingActionMenu;
     private Map<String, List<Map<Integer,List<String>>>> hanyu2pinyinMap;
-    private SearchView searchView;
     private int activiteContactsIndex = -1;
 
     private static final int SWIP_MENU_ITEM_CALL = 1;
@@ -113,6 +119,12 @@ public class ContactsListFragment extends Fragment {
     private static final int SWIP_MENU_ITEM_STAR = 3;
     private static final int SWIP_MENU_ITEM_EDIT = 4;
     private static final int SWIP_MENU_ITEM_DELETE = 5;
+    final Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    final Map<String, String> projectMap = new HashMap<String, String>() {{
+        put("id",ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
+        put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
+    }};
 
     public ContactsListFragment() {
         // Required empty public constructor
@@ -136,6 +148,11 @@ public class ContactsListFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(0, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -147,9 +164,6 @@ public class ContactsListFragment extends Fragment {
         builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView);
         alertDialog = builder.create();
-
-//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-//        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         initDates();
         initViews();
         return view;
@@ -157,86 +171,11 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        floatingActionMenu = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
-        floatingActionMenu.setClosedOnTouchOutside(true);
-        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if((listView.isSelected() || floatingActionMenu.isOpened())){
-                    floatingActionMenu.close(true);
-                }else{
-                    contactsController.actionNew();
-                }
-
-            }
-        });
-        onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int id = v.getId();
-                if(activiteContactsIndex == -1){
-                    return;
-                }
-                Map<String,String> map = new HashMap<>();
-                map = contactsList.get(activiteContactsIndex);
-                Log.d("Test", map.toString());
-                switch (id){
-                    case R.id.material_design_floating_action_menu_call:
-                        callController.callPhone(map.get("number"));
-                        break;
-                    case R.id.material_design_floating_action_menu_sms:
-                        smsController.sendSms(map.get("number"), "");
-                        break;
-                    case R.id.material_design_floating_action_menu_share:
-                        break;
-                    case R.id.material_design_floating_action_menu_details:
-                        contactsController.actionView(Long.parseLong(map.get("id")));
-                        break;
-                    default:
-                        break;
-                }
-                activiteContactsIndex = -1;
-                floatingActionMenu.close(true);
-
-            }
-        };
-
-        floatingActionButtonIds = new ArrayList<>();
-        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_call);
-        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_sms);
-        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_share);
-        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_details);
-
-        for(Integer floatingActionButtonId : floatingActionButtonIds){
-            FloatingActionButton fb = (FloatingActionButton)view.findViewById(floatingActionButtonId);
-            fb.setOnClickListener(onClickListener);
-        }
-
-
-
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_contacts_list_menu, menu);
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                contactsList.clear();
-                contactsList.addAll(contactsController.getContactsByName(newText));
-                adapter.notifyDataSetChanged();
-                return false;
-            }
-        });
+        initSearchView(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -260,54 +199,7 @@ public class ContactsListFragment extends Fragment {
         super.onAttach(context);
     }
 
-    private void initViews(){
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setHomeButtonEnabled(true);
-//        actionBar.setHomeAsUpIndicator(R.drawable.ic_sms_black_24dp);
-        actionBar.setIcon(R.drawable.logo_du_big);
-//        SearchView searchView = (SearchView) view.findViewById(R.id.searchview);
-//        ImageButton button_switch_contact_style = (ImageButton)view.findViewById(R.id.button_switch_contact_style_group);
-        Button button_contacts_cancel = (Button)dialogView.findViewById(R.id.button_contacts_cancel);
-        button_contacts_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.hide();
-            }
-        });
-        Button button_contacts_delete = (Button)dialogView.findViewById(R.id.button_contacts_delete);
-        button_contacts_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String,String> map = new HashMap<>();
-                map = contactsList.get(activiteContactsIndex);
-                int result = contactsController.deleteContacts(Long.valueOf(map.get("id")));
-                if (result ==1) {
-                    contactsList.remove(activiteContactsIndex);
-                    adapter.notifyDataSetChanged();
-                    Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
-                }
-                alertDialog.hide();
-            }
-        });
-
-//        searchView.setIconified(true);
-//        searchView.setIconifiedByDefault(false);
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                Log.d("Test", newText);
-//                return false;
-//            }
-//        });
-       // button_switch_contact_style.setOnClickListener((FragmentViewClickListener)getActivity());
-
-        listView = (SwipeMenuListView) view.findViewById(R.id.contents_list);
+    private void initIndexBar(){
         indexBar = (IndexBar)view.findViewById(R.id.index_bar);
         indexBar.setSections(alphabets());
         indexBar.setIndexBarFilter(new IndexBar.IIndexBarFilter() {
@@ -323,7 +215,6 @@ public class ContactsListFragment extends Fragment {
                     return;
                 }
                 for (Map.Entry<String, List<Map<Integer,List<String>>>> entry: hanyu2pinyinMap.entrySet()) {
-                    //Log.d("Test", entry.getKey().substring(0,1));
                     String zimu = entry.getKey().substring(0,1).substring(0,1);
                     if(zimu.equals(previewText.toLowerCase())){
                         for (Map<Integer, List<String>> keyName : entry.getValue()) {
@@ -338,13 +229,12 @@ public class ContactsListFragment extends Fragment {
                     }
                 }
                 Log.d("Test", String.valueOf(sideIndex)+previewText);
-               // Toast.makeText(getActivity(), String.valueOf(sideIndex)+previewText, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), String.valueOf(sideIndex)+previewText, Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
+    private void initSwipeRefreshLayout(){
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
 //        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 //            @Override
@@ -353,7 +243,33 @@ public class ContactsListFragment extends Fragment {
 //                swipeRefreshLayout.setRefreshing(false);
 //            }
 //        });
+    }
 
+    private void initActionBar(){
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.drawable.logo_du_big);
+    }
+
+    private void initSearchView(Menu menu){
+        final  SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                contactsList.clear();
+                contactsList.addAll(contactsController.getContactsByName(newText));
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+    }
+
+    private void initListView(){
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
             @Override
@@ -377,6 +293,11 @@ public class ContactsListFragment extends Fragment {
                 }
             }
         };
+
+        listView = (SwipeMenuListView) view.findViewById(R.id.contents_list);
+
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         listView.setMenuCreator(creator);
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
@@ -410,7 +331,6 @@ public class ContactsListFragment extends Fragment {
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("Test", "touch");
                 if (activiteContactsIndex != -1){
                     View view = getViewByPosition(activiteContactsIndex, listView);
                     int color = ContextCompat.getColor(getContext(), R.color.colorActiviBarOff);
@@ -437,7 +357,6 @@ public class ContactsListFragment extends Fragment {
                 int color = ContextCompat.getColor(getContext(), R.color.colorActiviBarOn);
                 ((TextView)view.findViewById(R.id.txt_name)).setTextColor(color);
                 ((TextView)view.findViewById(R.id.txt_phone)).setTextColor(color);
-//                Log.d("Test", contactsList.get(position).toString());
                 CircleImageView circleImageView = (CircleImageView)view.findViewById(R.id.img_head);
                 circleImageView.setBorderColor(color);
                 floatingActionMenu.open(true);
@@ -446,15 +365,131 @@ public class ContactsListFragment extends Fragment {
         });
     }
 
+    private void initFloatingActionMenu(){
+        floatingActionMenu = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
+        floatingActionMenu.setClosedOnTouchOutside(true);
+        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if((listView.isSelected() || floatingActionMenu.isOpened())){
+                    floatingActionMenu.close(true);
+                }else{
+                    contactsController.actionNew();
+                }
+
+            }
+        });
+        floatingActionButtonIds = new ArrayList<>();
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_call);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_sms);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_share);
+        floatingActionButtonIds.add(R.id.material_design_floating_action_menu_details);
+
+        for(Integer floatingActionButtonId : floatingActionButtonIds){
+            FloatingActionButton fb = (FloatingActionButton)view.findViewById(floatingActionButtonId);
+            fb.setOnClickListener(onClickListener);
+        }
+    }
+
+    private void initViews(){
+
+        Button button_contacts_cancel = (Button)dialogView.findViewById(R.id.button_contacts_cancel);
+        button_contacts_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.hide();
+            }
+        });
+        Button button_contacts_delete = (Button)dialogView.findViewById(R.id.button_contacts_delete);
+        button_contacts_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String,String> map = new HashMap<>();
+                map = contactsList.get(activiteContactsIndex);
+                int result = contactsController.deleteContacts(Long.valueOf(map.get("id")));
+                if (result ==1) {
+                    contactsList.remove(activiteContactsIndex);
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
+                }
+                alertDialog.hide();
+            }
+        });
+        initActionBar();
+        initListView();
+        initFloatingActionMenu();
+        initIndexBar();
+
+    }
+
     private void initDates(){
         contactsController = new ContactsController(getActivity());
         callController = new CallController(getActivity());
         smsController = new SmsController(getActivity());
-        contactsList = contactsController.getContactsList();
+        //contactsList = contactsController.getContactsList();
+        contactsList = new ArrayList<>();
 
-        ContactsComparator comp = new ContactsComparator();
-        Collections.sort(contactsList, comp);
 
+        adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
+                new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
+        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if(view instanceof CircleImageView){
+                    String idstring = String.valueOf(data);
+                    Long id = Long.valueOf(idstring);
+                    InputStream inputStream = contactsController.openPhoto(Long.valueOf(id));
+                    Bitmap bmp;
+                    if(inputStream != null){
+                        bmp = BitmapFactory.decodeStream(inputStream);
+                    }else{
+                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_face_black_24dp);
+                    }
+                    ((CircleImageView) view).setImageBitmap(bmp);
+
+                    return  true;
+                }
+                Integer id = view.getId();
+                Log.d("Test", String.valueOf(id));
+                return false;
+            }
+        });
+
+        onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = v.getId();
+                if(activiteContactsIndex == -1){
+                    return;
+                }
+                Map<String,String> map = new HashMap<>();
+                map = contactsList.get(activiteContactsIndex);
+                Log.d("Test", map.toString());
+                switch (id){
+                    case R.id.material_design_floating_action_menu_call:
+                        callController.callPhone(map.get("number"));
+                        break;
+                    case R.id.material_design_floating_action_menu_sms:
+                        smsController.sendSms(map.get("number"), "");
+                        break;
+                    case R.id.material_design_floating_action_menu_share:
+                        break;
+                    case R.id.material_design_floating_action_menu_details:
+                        contactsController.actionView(Long.parseLong(map.get("id")));
+                        break;
+                    default:
+                        break;
+                }
+                activiteContactsIndex = -1;
+                floatingActionMenu.close(true);
+
+            }
+        };
+
+    }
+
+    public void initPinyin(){
         hanyu2pinyinMap = new HashMap<>();
         for (int i =0; i < contactsList.size(); i++){
             // 获取所有拼音
@@ -486,35 +521,36 @@ public class ContactsListFragment extends Fragment {
             }
         }
 
-        for (Map.Entry<String, List<Map<Integer,List<String>>>> entry: hanyu2pinyinMap.entrySet()) {
-            Log.d("Test", entry.getKey().substring(0,1));
-        }
+    }
 
-        adapter = new SimpleAdapter(view.getContext(), contactsList, R.layout.contacts_list_item,
-                new String[]{"id", "name", "number"}, new int[]{R.id.img_head, R.id.txt_name, R.id.txt_phone});
-        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if(view instanceof CircleImageView){
-                    String idstring = String.valueOf(data);
-                    Long id = Long.valueOf(idstring);
-                    InputStream inputStream = contactsController.openPhoto(Long.valueOf(id));
-                    Bitmap bmp;
-                    if(inputStream != null){
-                        bmp = BitmapFactory.decodeStream(inputStream);
-                    }else{
-                        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_face_black_24dp);
-                    }
-                    ((CircleImageView) view).setImageBitmap(bmp);
+    @Override
+    public android.support.v4.content.Loader onCreateLoader(int id, Bundle args) {
+    String[] project = new String[projectMap.size()];
+        projectMap.values().toArray(project);
+    return Util.CursorLoaderCreate(getContext(), uri, project, null, null, null);
+}
 
-                    return  true;
-                }
-                Integer id = view.getId();
-                Log.d("Test", String.valueOf(id));
-                return false;
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+        while (data.moveToNext())
+        {
+            Map<String, String> contactsItemMap = new HashMap<>();
+            for (Map.Entry<String, String> entry : projectMap.entrySet()) {
+                String key = entry.getKey();
+                String key_uri = entry.getValue();
+                String value = data.getString(data.getColumnIndex(key_uri));
+                contactsItemMap.put(key, value);
             }
-        });
+            contactsList.add(contactsItemMap);
+            adapter.notifyDataSetChanged();
+        }
+        ContactsComparator comp = new ContactsComparator();
+        Collections.sort(contactsList, comp);
+        initPinyin();
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader loader) {
 
     }
 
@@ -550,8 +586,7 @@ public class ContactsListFragment extends Fragment {
         if (pos < firstListItemPosition || pos > lastListItemPosition ) {
             return listView.getAdapter().getView(pos, null, listView);
         } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
+            return listView.getChildAt(pos - firstListItemPosition);
         }
     }
 

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -59,6 +60,11 @@ public class Util {
                 cursor.close();
         }
         return list;
+    }
+
+    public static android.support.v4.content.Loader CursorLoaderCreate(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){
+        return new android.support.v4.content.CursorLoader(context, uri,
+                projection, selection, selectionArgs, sortOrder);
     }
 
     public static Uri ContentResolverInsert(ContentResolver contentResolver, Uri uri, ContentValues values){
