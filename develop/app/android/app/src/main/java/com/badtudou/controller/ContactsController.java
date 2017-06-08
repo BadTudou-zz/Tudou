@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Groups;
+import android.util.Log;
 
 import com.badtudou.util.Util;
 
@@ -39,7 +40,7 @@ public class ContactsController {
         String selection = null;
         Map<String, String> itemList = new HashMap<>();
         String[] selectionArgs = null;
-        String sortOrder = null;
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         itemList.put("id", ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
@@ -74,6 +75,7 @@ public class ContactsController {
        return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
+
     public List<Map<String, String>> getContactsByNumber(String number){
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = null;
@@ -85,6 +87,18 @@ public class ContactsController {
         itemList.put("name", ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         itemList.put("number", ContactsContract.CommonDataKinds.Phone.NUMBER);
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
+    }
+
+    public long getRawIdById(long contactID){
+        Uri uri = ContactsContract.RawContacts.CONTENT_URI;
+        String[] projection = {ContactsContract.RawContacts._ID};
+        String selection = ContactsContract.RawContacts.CONTACT_ID + " = ?";
+        Map<String, String> itemList = new HashMap<>();
+        String[] selectionArgs = {String.valueOf(contactID)};
+        String sortOrder = null;
+        itemList.put("rawid", ContactsContract.RawContacts._ID);
+        List<Map<String, String>> list =  Util.ContentResolverSearch(contentResolver,  uri,  projection, itemList, selection, selectionArgs, sortOrder);
+        return Long.valueOf(list.get(0).get("rawid"));
     }
 
     public InputStream openPhoto(long contactId) {

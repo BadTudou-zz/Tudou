@@ -1,13 +1,17 @@
 package com.badtudou.view.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,6 +36,7 @@ import com.badtudou.util.Util;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +50,7 @@ import java.util.Map;
  * Use the {@link HistoryListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryListFragment extends Fragment {
+public class HistoryListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,6 +69,14 @@ public class HistoryListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private FragmentViewClickListener fragmentViewClickListener;
+    private Uri uri = CallLog.Calls.CONTENT_URI;
+    Map<String, String> projectMap = new HashMap<String, String>(){{
+        put("id", CallLog.Calls._ID);
+        put("number", CallLog.Calls.NUMBER);
+        put("duration", CallLog.Calls.DURATION);
+        put("date", CallLog.Calls.DATE);
+        put("type", CallLog.Calls.TYPE);
+    }};
 
     public HistoryListFragment() {
         // Required empty public constructor
@@ -88,6 +101,12 @@ public class HistoryListFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(0, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -106,7 +125,8 @@ public class HistoryListFragment extends Fragment {
         initViews();
         ca3LogController = new Ca3logController(getActivity());
         contactsController = new ContactsController(getActivity());
-        ca3list = ca3LogController.getCallsList();
+        ca3list = new ArrayList<>();
+        //ca3list = ca3LogController.getCallsList();
         Log.d("Test", ca3list.toString());
         listView = (SwipeMenuListView)view.findViewById(R.id.call_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -232,6 +252,36 @@ public class HistoryListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] project = new String[projectMap.size()];
+        projectMap.values().toArray(project);
+        return Util.CursorLoaderCreate(getContext(), uri, project, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        ca3list.clear();
+        while (data.moveToNext())
+        {
+            Map<String, String> groupItemMap = new HashMap<>();
+            for (Map.Entry<String, String> entry : projectMap.entrySet()) {
+                String key = entry.getKey();
+                String key_uri = entry.getValue();
+                String value = data.getString(data.getColumnIndex(key_uri));
+                groupItemMap.put(key, value);
+            }
+            ca3list.add(groupItemMap);
+            adapter.notifyDataSetChanged();
+        }
+        data.close();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     /**

@@ -219,16 +219,13 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
                     if(zimu.equals(previewText.toLowerCase())){
                         for (Map<Integer, List<String>> keyName : entry.getValue()) {
                             Object[] indexs = keyName.keySet().toArray();
-                            Log.d("Test", String.valueOf(indexs[0]));
                             listView.setSelection((Integer)indexs[0]);
                             return;
 
                         }
-                        Log.d("Test", entry.getValue().get(0).toString());
                         break;
                     }
                 }
-                Log.d("Test", String.valueOf(sideIndex)+previewText);
                 // Toast.makeText(getActivity(), String.valueOf(sideIndex)+previewText, Toast.LENGTH_SHORT).show();
             }
         });
@@ -451,7 +448,6 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
                     return  true;
                 }
                 Integer id = view.getId();
-                Log.d("Test", String.valueOf(id));
                 return false;
             }
         });
@@ -465,7 +461,6 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
                 }
                 Map<String,String> map = new HashMap<>();
                 map = contactsList.get(activiteContactsIndex);
-                Log.d("Test", map.toString());
                 switch (id){
                     case R.id.material_design_floating_action_menu_call:
                         callController.callPhone(map.get("number"));
@@ -527,7 +522,8 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
     public android.support.v4.content.Loader onCreateLoader(int id, Bundle args) {
     String[] project = new String[projectMap.size()];
         projectMap.values().toArray(project);
-    return Util.CursorLoaderCreate(getContext(), uri, project, null, null, null);
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
+    return Util.CursorLoaderCreate(getContext(), uri, project, null, null, sortOrder);
 }
 
     @Override
@@ -541,9 +537,11 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
                 String value = data.getString(data.getColumnIndex(key_uri));
                 contactsItemMap.put(key, value);
             }
+            Log.d("Test", contactsItemMap.toString());
             contactsList.add(contactsItemMap);
             adapter.notifyDataSetChanged();
         }
+        data.close();
         ContactsComparator comp = new ContactsComparator();
         Collections.sort(contactsList, comp);
         initPinyin();
@@ -551,7 +549,7 @@ public class ContactsListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader loader) {
-
+        Log.d("Test", "onLoaderReset ");
     }
 
     /**

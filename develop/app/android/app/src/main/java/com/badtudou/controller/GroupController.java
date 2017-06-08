@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.badtudou.util.Util;
 
@@ -44,31 +45,32 @@ public class GroupController {
         return Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
-    public List<Map<String, String>> getMembership(Long id){
+    public List<Map<String, String>> getMembership(long id){
         Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = null;
-        String selection = ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = ? AND " +
-                ContactsContract.Data.MIMETYPE + " = ?";
+        String[] projection = {ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID, ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID, ContactsContract.CommonDataKinds.GroupMembership.DISPLAY_NAME_PRIMARY};
+       String selection = ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = ? ";//AND " +
+//                ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = ?";
         Map<String, String> itemList = new HashMap<>();
-        String[] selectionArgs = {String.valueOf(id), ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE};
+        String[] selectionArgs = {String.valueOf(id)};
         String sortOrder = null;
-        itemList.put("id", ContactsContract.Data.RAW_CONTACT_ID);
-        itemList.put("name", ContactsContract.Data.DISPLAY_NAME_PRIMARY);
+        itemList.put("id", ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID);
+        itemList.put("rowid", ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID);
+        itemList.put("name", ContactsContract.CommonDataKinds.GroupMembership.DISPLAY_NAME_PRIMARY);
         return  Util.ContentResolverSearch(contentResolver, uri, projection, itemList, selection, selectionArgs, sortOrder);
     }
 
     public void addMembership(long groupId, long personId){
         Uri uri = ContactsContract.Data.CONTENT_URI;
         ContentValues values = new ContentValues();
-        values.put(ContactsContract.Data.RAW_CONTACT_ID, String.valueOf(personId));
-        values.put(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID,String.valueOf(groupId));
-        values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE);
+        values.put(ContactsContract.Data.RAW_CONTACT_ID, personId);
+        values.put(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID,groupId);
+        values.put(ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE, ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE);
         Util.ContentResolverInsert(contentResolver, uri, values);
     }
 
     public int removeMembership(long groupId, long personId){
         Uri uri = ContactsContract.Data.CONTENT_URI;
-        String where = ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID + " = ?"
+        String where = ContactsContract.Data.CONTACT_ID + " = ?"
                 + " AND " + ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = ?"
                 + " AND " + ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = ? ;";
         String[] selectionArgs = {String.valueOf(personId), String.valueOf(groupId), ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE};
